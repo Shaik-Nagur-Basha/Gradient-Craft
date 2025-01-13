@@ -16,8 +16,7 @@
     />
 
     <!-- CSS File -->
-    <link rel="stylesheet" href="GradientCraft.css" />
-    <link rel="stylesheet" href="HistoryGradientCraft.css" />
+    <link rel="stylesheet" href="style.css" />
   </head>
   <body>
     <div class="container">
@@ -32,12 +31,10 @@
               <input
                 type="color"
                 id="color1"
-                value="#ff7b00"
                 class="form-control"
                 data-bs-toggle="tooltip"
                 data-bs-placement="top"
                 data-bs-title="Color 1"
-                onmouseover="toolTipTrigger()"
               />
             </div>
 
@@ -46,18 +43,23 @@
               <input
                 type="color"
                 id="color2"
-                value="#00b3b3"
                 class="form-control"
                 data-bs-toggle="tooltip"
                 data-bs-placement="top"
                 data-bs-title="Color 2"
-                onmouseover="toolTipTrigger()"
               />
             </div>
           </div>
 
           <!-- Add Color Button -->
-          <button id="rcb" class="add-color-btn" onclick="addColorInput()">
+          <button
+            id="rcb"
+            class="add-color-btn"
+            onclick="addColorInput()"
+            data-bs-toggle="tooltip"
+            data-bs-placement="top"
+            data-bs-title="Add Color 3"
+          >
             Add More Colors
           </button>
 
@@ -96,7 +98,6 @@
               data-bs-toggle="tooltip"
               data-bs-placement="top"
               data-bs-title="Copy to clipboard"
-              onmouseover="toolTipTrigger()"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -132,11 +133,10 @@
           <div class="saveOrHistory">
             <button
               class="save-btn"
-              onclick=""
+              onclick="savedToSelected()"
               data-bs-toggle="tooltip"
               data-bs-placement="top"
               data-bs-title="Save to Selected"
-              onmouseover="toolTipTrigger()"
             >
               Save
             </button>
@@ -146,7 +146,6 @@
               data-bs-toggle="tooltip"
               data-bs-placement="right"
               data-bs-title="Switch to History, Saved"
-              onmouseover="toolTipTrigger()"
             >
               Switch to History, Saved
             </div>
@@ -157,7 +156,6 @@
             data-bs-toggle="tooltip"
             data-bs-placement="top"
             data-bs-title="Download History & Saved"
-            onmouseover="toolTipTrigger()"
           >
             Download Gradients
           </button>
@@ -169,7 +167,6 @@
         data-bs-toggle="tooltip"
         data-bs-placement="top"
         data-bs-title="Delete Saved & History"
-        onmouseover="toolTipTrigger()"
       >
         <svg
           width="24"
@@ -219,13 +216,12 @@
             height="24"
             viewBox="0 0 24 24"
             width="24"
-            onclick="backToGC()"
+            onclick="homePage()"
             focusable="false"
             aria-hidden="true"
             data-bs-toggle="tooltip"
             data-bs-placement="top"
             data-bs-title="Switch to Home"
-            onmouseover="toolTipTrigger()"
           >
             <path
               d="M21 11v1H5.64l6.72 6.72-.71.71-7.93-7.93 7.92-7.92.71.71L5.64 11H21z"
@@ -243,7 +239,6 @@
             data-bs-toggle="tooltip"
             data-bs-placement="top"
             data-bs-title="Switch to Saved"
-            onmouseover="toolTipTrigger()"
             onclick="savedPage()"
           >
             <path
@@ -255,22 +250,20 @@
           <h1 class="text-center">Gradient Craft History</h1>
           <button
             class="download-btn"
-            onclick="downloadGradients()"
+            onclick="downloadGradientsHistory()"
             data-bs-toggle="tooltip"
             data-bs-placement="top"
             data-bs-title="Download History"
-            onmouseover="toolTipTrigger()"
           >
             Download
           </button>
         </div>
         <div
           class="gradientsDeleteIcon"
-          onclick="clearGradients()"
+          onclick="deleteGradientsHistory()"
           data-bs-toggle="tooltip"
           data-bs-placement="left"
           data-bs-title="Delete History"
-          onmouseover="toolTipTrigger()"
         >
           <svg
             width="24"
@@ -289,7 +282,7 @@
           </svg>
         </div>
       </div>
-      <div class="historyContent">
+      <div class="gradientContent">
         <!-- <div class="gradientColor"></div> -->
       </div>
     </div>
@@ -308,6 +301,6 @@
     ></script>
 
     <!-- JS File -->
-    <script src="GradientCraft.js"></script>
+    <script src="script.js"></script>
   </body>
 </html>
