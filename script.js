@@ -375,6 +375,7 @@ function savedPage() {
 
   // Update tooltips
   toolTipTrigger();
+  loadGradients();
 }
 
 function forBackground() {

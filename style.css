@@ -25,6 +25,9 @@ body {
   place-self: center;
 }
 
+#gradientCode {
+}
+
 .copy-icon {
   cursor: pointer;
   padding: 5px;
@@ -485,4 +488,8 @@ h1 {
 .header {
   display: flex;
   gap: 21px;
+}
+
+#gradientCode {
+  padding-right: 35px;
 }
