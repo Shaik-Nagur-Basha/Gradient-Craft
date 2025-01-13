@@ -1,0 +1,175 @@
+body {
+  font-family: "Poppins", sans-serif;
+  display: flex;
+  padding: 21px;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.512);
+}
+
+.container {
+  box-shadow: 0 4px 6px rgba(255, 255, 255, 0.1);
+  background: rgb(181, 181, 181);
+  border-radius: 12px;
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+}
+
+.gradient-preview {
+  width: 480px;
+  height: 270px;
+  border: 1px solid #cccccc;
+  border-radius: 9px;
+  box-shadow: 2px 2px 4px;
+  place-self: center;
+}
+
+.copy-icon {
+  cursor: pointer;
+  padding: 5px;
+  border-radius: 5px;
+  z-index: 1;
+  position: absolute;
+  right: 5px;
+  background-color: rgb(255, 255, 255);
+  width: 25px;
+  height: 25px;
+  box-shadow: 1px 1px 5px black;
+}
+
+.add-color-btn,
+.remove-color-btn {
+  background-color: #28a745;
+  border: none;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.remove-color-btn {
+  background-color: #dc3545;
+}
+
+.add-color-btn:hover,
+.remove-color-btn:hover {
+  background-color: #218838;
+}
+
+input[type="color"] {
+  width: 50px;
+  height: 50px;
+  border: none;
+  border-radius: 0;
+  padding: 0;
+}
+
+select {
+  width: auto;
+}
+
+.input-label {
+  font-weight: 500;
+}
+
+.col-md-6 {
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  gap: 21px;
+  flex: 0 0 auto;
+  width: 40%;
+}
+
+.color-inputs,
+#extraColors {
+  display: flex;
+  justify-content: space-around;
+}
+
+.input-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  position: relative; /* For Copy Icon Position */
+}
+
+.input-container .input-label {
+  text-wrap-mode: nowrap;
+}
+
+.gc {
+  width: fit-content;
+  place-self: center;
+  box-shadow: 2px 2px 4px black;
+  border-radius: 10px;
+}
+
+#rcb {
+  box-shadow: 2px 2px 4px black;
+  place-self: center;
+  width: fit-content;
+}
+
+#liveToast {
+  box-shadow: 2px 2px 6px black;
+}
+
+.gradientCraftHistory {
+  cursor: pointer;
+  color: rgba(255, 0, 0, 0.596);
+}
+
+.gradientCraftHistory:hover {
+  text-decoration: underline;
+  color: rgba(255, 0, 0, 0.742);
+}
+
+.saveOrHistory {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.save-btn,
+.download-btn {
+  box-shadow: 2px 2px 4px black;
+  width: fit-content;
+  background-color: #28a745;
+  border: none;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.download-btn {
+  place-self: end;
+}
+
+@media (min-width: 1000px) {
+  .w-60p {
+    width: 60%;
+  }
+}
+
+@media (max-width: 560px) {
+  .gradient-preview {
+    width: 100%;
+  }
+}
+
+@media (max-width: 1000px) {
+  .row {
+    flex-direction: column;
+  }
+  .col-md-6 {
+    width: 100%;
+  }
+}
+
+@media (min-width: 980px) and (max-width: 1000px) {
+  .container {
+    width: 60%;
+  }
+}

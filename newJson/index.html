@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Customizable Gradient Generator</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <style>
+    .gradient-preview {
+      width: 100%;
+      height: 200px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      margin-top: 20px;
+    }
+    .recent-gradients {
+      margin-top: 20px;
+    }
+    .gradient-item {
+      padding: 10px;
+      margin-bottom: 10px;
+      background-color: #f4f4f4;
+      border-radius: 5px;
+    }
+    .gradient-item span {
+      color: #888;
+    }
+  </style>
+</head>
+<body>
+  <div class="container py-5">
+    <h2>Customizable Gradient Generator</h2>
+    <div class="row">
+      <div class="col-md-6">
+        <!-- Color Inputs -->
+        <div class="mb-3">
+          <label for="color1" class="form-label">Color 1:</label>
+          <input type="color" id="color1" class="form-control" value="#ff7b00" />
+        </div>
+        <div class="mb-3">
+          <label for="color2" class="form-label">Color 2:</label>
+          <input type="color" id="color2" class="form-control" value="#00b3b3" />
+        </div>
+
+        <!-- Gradient Direction -->
+        <div class="mb-3">
+          <label for="direction" class="form-label">Gradient Direction:</label>
+          <select id="direction" class="form-select">
+            <option value="to right">Left to Right</option>
+            <option value="to bottom">Top to Bottom</option>
+            <option value="to top right">Top-Left to Bottom-Right</option>
+          </select>
+        </div>
+
+        <!-- Gradient Preview -->
+        <div class="gradient-preview" id="preview"></div>
+
+        <!-- Generate Random Button -->
+        <button class="btn btn-secondary mt-3" onclick="generateRandomGradient()">Generate Random Gradient</button>
+
+        <!-- Download Button -->
+        <button class="btn btn-primary mt-3" onclick="downloadGradients()">Download Gradients</button>
+      </div>
+
+      <div class="col-md-6">
+        <h4>Recent Gradients</h4>
+        <ul id="recentGradients" class="list-unstyled recent-gradients"></ul>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // Elements
+    const color1 = document.getElementById('color1');
+    const color2 = document.getElementById('color2');
+    const direction = document.getElementById('direction');
+    const preview = document.getElementById('preview');
+    const recentGradientsList = document.getElementById('recentGradients');
+
+    // Load existing gradients from localStorage on page load
+    window.onload = loadGradients;
+
+    function updatePreview() {
+      const gradDirection = direction.value;
+      const gradColors = `${color1.value}, ${color2.value}`;
+      const gradientStyle = `linear-gradient(${gradDirection}, ${gradColors})`;
+
+      preview.style.background = gradientStyle;
+    }
+
+    function generateRandomGradient() {
+      const randomColor = () => `#${Math.floor(Math.random() * 16777215).toString(16)}`;
+      const randomDirection = ['to right', 'to bottom', 'to top right'][Math.floor(Math.random() * 3)];
+
+      // Update color inputs and preview
+      color1.value = randomColor();
+      color2.value = randomColor();
+      direction.value = randomDirection;
+      updatePreview();
+
+      // Create gradient object with timestamp
+      const gradient = {
+        timestamp: new Date().toISOString(),
+        gradient: `background: linear-gradient(${randomDirection}, ${color1.value}, ${color2.value});`
+      };
+
+      // Save to localStorage
+      saveGradient(gradient);
+      loadGradients();
+    }
+
+    function saveGradient(gradient) {
+      const gradients = JSON.parse(localStorage.getItem('gradients')) || [];
+      gradients.push(gradient);
+      localStorage.setItem('gradients', JSON.stringify(gradients));
+    }
+
+    function loadGradients() {
+      const gradients = JSON.parse(localStorage.getItem('gradients')) || [];
+      recentGradientsList.innerHTML = ''; // Clear current list
+
+      gradients.forEach(gradient => {
+        const li = document.createElement('li');
+        li.className = 'gradient-item';
+        li.style = `${gradient.gradient}`
+        li.innerHTML = `
+          <div>
+            <strong>Gradient:</strong> <span>${gradient.gradient}</span>
+          </div>
+          <div><small>Generated on: ${new Date(gradient.timestamp).toLocaleString()}</small></div>
+        `;
+        recentGradientsList.appendChild(li);
+      });
+    }
+
+    function downloadGradients() {
+      const gradients = JSON.parse(localStorage.getItem('gradients')) || [];
+      const blob = new Blob([JSON.stringify(gradients, null, 2)], { type: 'application/json' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = 'gradients.json';
+      link.click();
+    }
+
+    // Initial preview
+    updatePreview();
+  </script>
+</body>
+</html>

@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Gradient Craft</title>
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <!-- Google Fonts (Modern Font for readability) -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- CSS File -->
+    <link rel="stylesheet" href="GradientCraft.css" />
+    <link rel="stylesheet" href="HistoryGradientCraft.css" />
+  </head>
+  <body>
+    <div class="container">
+      <h1 class="text-center mb-5">Gradient Craft</h1>
+      <div class="row">
+        <!-- Inputs Section -->
+        <div class="col-md-6">
+          <!-- Color Inputs -->
+          <div class="color-inputs">
+            <div class="input-container">
+              <label class="input-label" for="color1">Color 1:</label>
+              <input
+                type="color"
+                id="color1"
+                value="#ff7b00"
+                class="form-control"
+                data-bs-toggle="tooltip"
+                data-bs-placement="top"
+                data-bs-title="Color 1"
+                onmouseover="toolTipTrigger()"
+              />
+            </div>
+
+            <div class="input-container">
+              <label class="input-label" for="color2">Color 2:</label>
+              <input
+                type="color"
+                id="color2"
+                value="#00b3b3"
+                class="form-control"
+                data-bs-toggle="tooltip"
+                data-bs-placement="top"
+                data-bs-title="Color 2"
+                onmouseover="toolTipTrigger()"
+              />
+            </div>
+          </div>
+
+          <!-- Add Color Button -->
+          <button id="rcb" class="add-color-btn" onclick="addColorInput()">
+            Add More Colors
+          </button>
+
+          <!-- Additional Color Inputs (Initially Hidden) -->
+          <div id="extraColors"></div>
+
+          <!-- Gradient Direction -->
+          <div class="input-container">
+            <label class="input-label" for="direction"
+              >Gradient Direction:</label
+            >
+            <select id="direction" class="form-select">
+              <option value="to right">Left to Right</option>
+              <option value="to bottom">Top to Bottom</option>
+              <option value="to top right">Top-Left to Bottom-Right</option>
+              <option value="to bottom right">Top-Right to Bottom-Left</option>
+              <option value="to top">Bottom to Top</option>
+              <option value="to left">Right to Left</option>
+              <option value="to top left">Bottom-Right to Top-Left</option>
+            </select>
+          </div>
+
+          <!-- Gradient CSS Code Display -->
+          <div class="input-container">
+            <input
+              type="text"
+              id="gradientCode"
+              class="form-control"
+              readonly
+            />
+            <div
+              id="liveToastBtn"
+              class="copy-icon d-flex align-items-center justify-content-center ms-2"
+              style="border: 1px solid #ced4dad0; border-radius: 5px"
+              onclick="copyCode()"
+              data-bs-toggle="tooltip"
+              data-bs-placement="top"
+              data-bs-title="Copy to clipboard"
+              onmouseover="toolTipTrigger()"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                aria-hidden="true"
+                height="16"
+                viewBox="0 0 16 16"
+                version="1.1"
+                width="16"
+                data-view-component="true"
+                class="octicon octicon-copy js-clipboard-copy-icon"
+              >
+                <path
+                  d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 0 1 0 1.5h-1.5a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-1.5a.75.75 0 0 1 1.5 0v1.5A1.75 1.75 0 0 1 9.25 16h-7.5A1.75 1.75 0 0 1 0 14.25Z"
+                />
+                <path
+                  d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0 1 14.25 11h-7.5A1.75 1.75 0 0 1 5 9.25Zm1.75-.25a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z"
+                />
+              </svg>
+            </div>
+          </div>
+
+          <button
+            class="btn btn-secondary gc"
+            onclick="generateRandomGradient()"
+          >
+            Generate Random Gradient
+          </button>
+        </div>
+
+        <!-- Live Preview Section -->
+        <div class="col-md-6 w-60p">
+          <div class="gradient-preview" id="preview"></div>
+          <div class="saveOrHistory">
+            <button
+              class="save-btn"
+              onclick=""
+              data-bs-toggle="tooltip"
+              data-bs-placement="top"
+              data-bs-title="Save to Selected"
+              onmouseover="toolTipTrigger()"
+            >
+              Save
+            </button>
+            <div
+              class="gradientCraftHistory"
+              onclick="historyPage()"
+              data-bs-toggle="tooltip"
+              data-bs-placement="right"
+              data-bs-title="Switch to History, Saved"
+              onmouseover="toolTipTrigger()"
+            >
+              Switch to History, Saved
+            </div>
+          </div>
+          <button
+            class="download-btn"
+            onclick="downloadGradients()"
+            data-bs-toggle="tooltip"
+            data-bs-placement="top"
+            data-bs-title="Download History & Saved"
+            onmouseover="toolTipTrigger()"
+          >
+            Download Gradients
+          </button>
+        </div>
+      </div>
+      <div
+        class="gradientsDeleteIconOnCraft"
+        onclick="clearGradients()"
+        data-bs-toggle="tooltip"
+        data-bs-placement="top"
+        data-bs-title="Delete Saved & History"
+        onmouseover="toolTipTrigger()"
+      >
+        <svg
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          class="h-5 w-5 shrink-0"
+        >
+          <path
+            fill-rule="evenodd"
+            clip-rule="evenodd"
+            d="M10.5555 4C10.099 4 9.70052 4.30906 9.58693 4.75114L9.29382 5.8919H14.715L14.4219 4.75114C14.3083 4.30906 13.9098 4 13.4533 4H10.5555ZM16.7799 5.8919L16.3589 4.25342C16.0182 2.92719 14.8226 2 13.4533 2H10.5555C9.18616 2 7.99062 2.92719 7.64985 4.25342L7.22886 5.8919H4C3.44772 5.8919 3 6.33961 3 6.8919C3 7.44418 3.44772 7.8919 4 7.8919H4.10069L5.31544 19.3172C5.47763 20.8427 6.76455 22 8.29863 22H15.7014C17.2354 22 18.5224 20.8427 18.6846 19.3172L19.8993 7.8919H20C20.5523 7.8919 21 7.44418 21 6.8919C21 6.33961 20.5523 5.8919 20 5.8919H16.7799ZM17.888 7.8919H6.11196L7.30423 19.1057C7.3583 19.6142 7.78727 20 8.29863 20H15.7014C16.2127 20 16.6417 19.6142 16.6958 19.1057L17.888 7.8919ZM10 10C10.5523 10 11 10.4477 11 11V16C11 16.5523 10.5523 17 10 17C9.44772 17 9 16.5523 9 16V11C9 10.4477 9.44772 10 10 10ZM14 10C14.5523 10 15 10.4477 15 11V16C15 16.5523 14.5523 17 14 17C13.4477 17 13 16.5523 13 16V11C13 10.4477 13.4477 10 14 10Z"
+            fill="currentColor"
+          />
+        </svg>
+      </div>
+    </div>
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+      <div
+        id="liveToast"
+        class="toast"
+        role="alert"
+        aria-live="assertive"
+        aria-atomic="true"
+      >
+        <div class="toast-header">
+          <strong class="me-auto" style="color: #218838"
+            >Successfully Copied!</strong
+          >
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="toast"
+            aria-label="Close"
+          ></button>
+        </div>
+        <div class="toast-body"></div>
+      </div>
+    </div>
+    <div class="historyContainer">
+      <div class="historyTitle">
+        <div class="backToGCD">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            enable-background="new 0 0 24 24"
+            height="24"
+            viewBox="0 0 24 24"
+            width="24"
+            onclick="backToGC()"
+            focusable="false"
+            aria-hidden="true"
+            data-bs-toggle="tooltip"
+            data-bs-placement="top"
+            data-bs-title="Switch to Home"
+            onmouseover="toolTipTrigger()"
+          >
+            <path
+              d="M21 11v1H5.64l6.72 6.72-.71.71-7.93-7.93 7.92-7.92.71.71L5.64 11H21z"
+            />
+          </svg>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            enable-background="new 0 0 24 24"
+            height="24"
+            viewBox="0 0 24 24"
+            width="24"
+            focusable="false"
+            aria-hidden="true"
+            style="transform: scaleX(-1)"
+            data-bs-toggle="tooltip"
+            data-bs-placement="top"
+            data-bs-title="Switch to Saved"
+            onmouseover="toolTipTrigger()"
+            onclick="savedPage()"
+          >
+            <path
+              d="M21 11v1H5.64l6.72 6.72-.71.71-7.93-7.93 7.92-7.92.71.71L5.64 11H21z"
+            />
+          </svg>
+        </div>
+        <div class="header">
+          <h1 class="text-center">Gradient Craft History</h1>
+          <button
+            class="download-btn"
+            onclick="downloadGradients()"
+            data-bs-toggle="tooltip"
+            data-bs-placement="top"
+            data-bs-title="Download History"
+            onmouseover="toolTipTrigger()"
+          >
+            Download
+          </button>
+        </div>
+        <div
+          class="gradientsDeleteIcon"
+          onclick="clearGradients()"
+          data-bs-toggle="tooltip"
+          data-bs-placement="left"
+          data-bs-title="Delete History"
+          onmouseover="toolTipTrigger()"
+        >
+          <svg
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-5 w-5 shrink-0"
+          >
+            <path
+              fill-rule="evenodd"
+              clip-rule="evenodd"
+              d="M10.5555 4C10.099 4 9.70052 4.30906 9.58693 4.75114L9.29382 5.8919H14.715L14.4219 4.75114C14.3083 4.30906 13.9098 4 13.4533 4H10.5555ZM16.7799 5.8919L16.3589 4.25342C16.0182 2.92719 14.8226 2 13.4533 2H10.5555C9.18616 2 7.99062 2.92719 7.64985 4.25342L7.22886 5.8919H4C3.44772 5.8919 3 6.33961 3 6.8919C3 7.44418 3.44772 7.8919 4 7.8919H4.10069L5.31544 19.3172C5.47763 20.8427 6.76455 22 8.29863 22H15.7014C17.2354 22 18.5224 20.8427 18.6846 19.3172L19.8993 7.8919H20C20.5523 7.8919 21 7.44418 21 6.8919C21 6.33961 20.5523 5.8919 20 5.8919H16.7799ZM17.888 7.8919H6.11196L7.30423 19.1057C7.3583 19.6142 7.78727 20 8.29863 20H15.7014C16.2127 20 16.6417 19.6142 16.6958 19.1057L17.888 7.8919ZM10 10C10.5523 10 11 10.4477 11 11V16C11 16.5523 10.5523 17 10 17C9.44772 17 9 16.5523 9 16V11C9 10.4477 9.44772 10 10 10ZM14 10C14.5523 10 15 10.4477 15 11V16C15 16.5523 14.5523 17 14 17C13.4477 17 13 16.5523 13 16V11C13 10.4477 13.4477 10 14 10Z"
+              fill="currentColor"
+            />
+          </svg>
+        </div>
+      </div>
+      <div class="historyContent">
+        <!-- <div class="gradientColor"></div> -->
+      </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+      integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"
+      integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy"
+      crossorigin="anonymous"
+    ></script>
+
+    <!-- JS File -->
+    <script src="GradientCraft.js"></script>
+  </body>
+</html>
