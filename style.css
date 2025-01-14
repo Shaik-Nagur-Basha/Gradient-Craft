@@ -25,9 +25,6 @@ body {
   place-self: center;
 }
 
-#gradientCode {
-}
-
 .copy-icon {
   cursor: pointer;
   padding: 5px;
@@ -170,6 +167,9 @@ select {
   .col-md-6 {
     width: 100%;
   }
+  body {
+    height: 100%;
+  }
 }
 
 @media (min-width: 980px) and (max-width: 1000px) {
@@ -251,7 +251,7 @@ h1 {
 
 .container {
   height: fit-content;
-  margin: auto !important;
+  margin: auto;
 }
 
 .backToGCD {
@@ -282,6 +282,7 @@ h1 {
   padding: 10px;
   flex-wrap: wrap;
   justify-content: center;
+  min-height: 87vh;
 }
 
 .gradientColor {
@@ -492,4 +493,13 @@ h1 {
 
 #gradientCode {
   padding-right: 35px;
+}
+
+#color1,
+#color2,
+#color3,
+#color4,
+select,
+option {
+  cursor: pointer;
 }
