@@ -84,11 +84,7 @@
 
           <!-- Gradient CSS Code Display -->
           <div class="input-container">
-            <input
-              type="text"
-              id="gradientCode"
-              class="form-control"
-            />
+            <input type="text" id="gradientCode" class="form-control" />
             <div
               id="liveToastBtn"
               class="copy-icon d-flex align-items-center justify-content-center ms-2"
@@ -100,7 +96,6 @@
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                aria-hidden="true"
                 height="16"
                 viewBox="0 0 16 16"
                 version="1.1"
@@ -135,7 +130,7 @@
               onclick="savedToSelected()"
               data-bs-toggle="tooltip"
               data-bs-placement="top"
-              data-bs-title="Save to Selected"
+              data-bs-title="Save to Favourite"
             >
               Save
             </button>
@@ -144,9 +139,9 @@
               onclick="historyPage()"
               data-bs-toggle="tooltip"
               data-bs-placement="right"
-              data-bs-title="Switch to History, Saved"
+              data-bs-title="Switch to History, Favourite"
             >
-              Switch to History, Saved
+              Switch to History, Favourite
             </div>
           </div>
           <button
@@ -154,7 +149,7 @@
             onclick="downloadGradients()"
             data-bs-toggle="tooltip"
             data-bs-placement="top"
-            data-bs-title="Download History & Saved"
+            data-bs-title="Download History & Favourite"
           >
             Download Gradients
           </button>
@@ -165,7 +160,7 @@
         onclick="clearGradients()"
         data-bs-toggle="tooltip"
         data-bs-placement="top"
-        data-bs-title="Delete Saved & History"
+        data-bs-title="Delete Favourite & History"
       >
         <svg
           width="24"
@@ -217,7 +212,6 @@
             width="24"
             onclick="homePage()"
             focusable="false"
-            aria-hidden="true"
             data-bs-toggle="tooltip"
             data-bs-placement="top"
             data-bs-title="Switch to Home"
@@ -233,11 +227,10 @@
             viewBox="0 0 24 24"
             width="24"
             focusable="false"
-            aria-hidden="true"
             style="transform: scaleX(-1)"
             data-bs-toggle="tooltip"
             data-bs-placement="top"
-            data-bs-title="Switch to Saved"
+            data-bs-title="Switch to Selected"
             onclick="savedPage()"
           >
             <path

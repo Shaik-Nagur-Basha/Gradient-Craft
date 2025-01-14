@@ -67,6 +67,14 @@ function copyCode() {
   });
 }
 
+function liveToastMessage(headerMessage, bodyMessage) {
+  const liveToast = document.querySelector("#liveToast");
+  liveToast.children[0].children[0].innerHTML = headerMessage;
+  liveToast.children[1].innerHTML = bodyMessage;
+  const toastBootstrap = bootstrap.Toast.getOrCreateInstance(liveToast);
+  toastBootstrap.show();
+}
+
 function addColorInput() {
   if (colorInputs.length < 4) {
     const newColorInput = document.createElement("div");
@@ -91,7 +99,7 @@ function addColorInput() {
         .querySelector(".add-color-btn")
         .setAttribute("data-bs-title", "Add Color 4");
     if (colorInputs.length === 4) {
-      document.querySelector(".add-color-btn").textContent =
+      document.querySelector(".add-color-btn").innerHTML =
         "Remove Added Colors";
       document
         .querySelector(".add-color-btn")
@@ -110,7 +118,7 @@ function addColorInput() {
 function removeColorInputs() {
   extraColorsDiv.innerHTML = "";
   colorInputs = [color1, color2];
-  document.querySelector(".remove-color-btn").textContent = "Add More Colors";
+  document.querySelector(".remove-color-btn").innerHTML = "Add More Colors";
   document
     .querySelector(".remove-color-btn")
     .classList.replace("remove-color-btn", "add-color-btn");
@@ -123,7 +131,9 @@ function removeColorInputs() {
 
 function generateRandomGradient() {
   const randomColor = () =>
-    `#${Math.floor(Math.random() * 16777215).toString(16)}`;
+    `#${Math.floor(Math.random() * 16777215)
+      .toString(16)
+      .padStart(6, "0")}`;
   const randomDirection = [
     "to right",
     "to bottom",
@@ -160,7 +170,7 @@ function historyPage() {
   );
   container.children[0].children[0].children[1].setAttribute(
     "data-bs-title",
-    "Switch to Saved"
+    "Switch to Favourite"
   );
   container.children[0].children[0].children[1].setAttribute(
     "onclick",
@@ -223,6 +233,10 @@ function saveGradientToSelected(selectedGradient) {
     JSON.parse(localStorage.getItem("selectedGradients")) || [];
   selectedGradients.push(selectedGradient);
   localStorage.setItem("selectedGradients", JSON.stringify(selectedGradients));
+  liveToastMessage(
+    "Successfully Gradient Favourited!",
+    `${selectedGradient.gradient}`
+  );
   loadGradients();
   forBackground();
 }
@@ -238,7 +252,7 @@ function loadGradients() {
 
   if (
     document.querySelector(".historyContainer").children[0].children[1]
-      .children[0].innerHTML === "Saved Gradients"
+      .children[0].innerHTML === "Favourite Gradients"
   ) {
     gradients = selectedGradients;
     gradLoaction = 1;
@@ -246,26 +260,35 @@ function loadGradients() {
     gradients = gradientsHistory;
     gradLoaction = 0;
   }
-  gradients.reverse().forEach((gradient, index) => {
-    const div = document.createElement("div");
-    div.className = "gradientColor";
-    div.style = `${gradient.gradient}`;
-    div.innerHTML = `
+
+  gradients.length && gradExist();
+  gradients.length &&
+    gradients.reverse().forEach((gradient, index) => {
+      const div = document.createElement("div");
+      div.className = "gradientColor";
+      div.style = `${gradient.gradient}`;
+      div.innerHTML = `
                           <div>
-                            <b>${gradient.gradient.slice(28, -2)}</b>
+                            <b onclick="redirectToGradEditor('${
+                              gradient.gradient
+                            }')">${gradient.gradient.slice(28, -2)}</b>
                           </div>
                           <div>Generated on: ${new Date(
                             gradient.timestamp
                           ).toLocaleString()}</div>
-                          <div class="gradientDeleteIcon" onclick="deleteGradient(${gradLoaction}, ${index}
-                          )">
+                          <div class="gradientDeleteIcon" onclick="deleteGradient(${gradLoaction}, ${index}, '${
+        gradient.gradient
+      }')">
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 shrink-0">
                               <path fill-rule="evenodd" clip-rule="evenodd" d="M10.5555 4C10.099 4 9.70052 4.30906 9.58693 4.75114L9.29382 5.8919H14.715L14.4219 4.75114C14.3083 4.30906 13.9098 4 13.4533 4H10.5555ZM16.7799 5.8919L16.3589 4.25342C16.0182 2.92719 14.8226 2 13.4533 2H10.5555C9.18616 2 7.99062 2.92719 7.64985 4.25342L7.22886 5.8919H4C3.44772 5.8919 3 6.33961 3 6.8919C3 7.44418 3.44772 7.8919 4 7.8919H4.10069L5.31544 19.3172C5.47763 20.8427 6.76455 22 8.29863 22H15.7014C17.2354 22 18.5224 20.8427 18.6846 19.3172L19.8993 7.8919H20C20.5523 7.8919 21 7.44418 21 6.8919C21 6.33961 20.5523 5.8919 20 5.8919H16.7799ZM17.888 7.8919H6.11196L7.30423 19.1057C7.3583 19.6142 7.78727 20 8.29863 20H15.7014C16.2127 20 16.6417 19.6142 16.6958 19.1057L17.888 7.8919ZM10 10C10.5523 10 11 10.4477 11 11V16C11 16.5523 10.5523 17 10 17C9.44772 17 9 16.5523 9 16V11C9 10.4477 9.44772 10 10 10ZM14 10C14.5523 10 15 10.4477 15 11V16C15 16.5523 14.5523 17 14 17C13.4477 17 13 16.5523 13 16V11C13 10.4477 13.4477 10 14 10Z" fill="currentColor"/>
                             </svg>
                           </div>
                         `;
-    gradientContent.appendChild(div);
-  });
+      gradientContent.appendChild(div);
+    });
+  gradLoaction
+    ? gradients.length || gradNotExist("Favourite Gradient not saved yet!")
+    : gradients.length || gradNotExist("Not generated Random Gradient yet!");
 }
 
 function downloadGradientsHistory() {
@@ -278,6 +301,10 @@ function downloadGradientsHistory() {
   link.href = URL.createObjectURL(blob);
   link.download = "gradientsHistory.json";
   link.click();
+  liveToastMessage(
+    "Gradient History Downloaded!",
+    "Filename is gradientsHistory.json"
+  );
 }
 
 function downloadSelectedGradients() {
@@ -290,33 +317,50 @@ function downloadSelectedGradients() {
   link.href = URL.createObjectURL(blob);
   link.download = "selectedGradients.json";
   link.click();
+  liveToastMessage(
+    "Gradient Favourited Downloaded!",
+    "Filename is selectedGradients.json"
+  );
 }
 
 function downloadGradients() {
   downloadGradientsHistory();
   downloadSelectedGradients();
+  liveToastMessage(
+    "History & Favourited Downloaded!",
+    "File names is gradientsHistory.json, selectedGradients.json"
+  );
 }
 
 function clearGradients() {
   localStorage.removeItem("gradientsHistory");
   localStorage.removeItem("selectedGradients");
   loadGradients();
-  console.log("All gradients have been cleared from local storage.");
+  liveToastMessage(
+    "Successfully DELETED History & Favourite!",
+    "All gradients have been cleared from local storage."
+  );
 }
 
 function deleteGradientsHistory() {
   localStorage.removeItem("gradientsHistory");
   loadGradients();
-  console.log("Gradients History have been cleared from local storage.");
+  liveToastMessage(
+    "Successfully DELETED History!",
+    "Gradients History have been cleared from local storage."
+  );
 }
 
 function deleteSelectedGradients() {
   localStorage.removeItem("selectedGradients");
   loadGradients();
-  console.log("All Selected gradients have been cleared from local storage.");
+  liveToastMessage(
+    "Successfully DELETED Favourite!",
+    "Favourite Gradients have been cleared from local storage."
+  );
 }
 
-function deleteGradient(gradLoaction, index) {
+function deleteGradient(gradLoaction, index, gradientCode) {
   // console.log(
   //   "After Trigger",
   //   "gradLoaction = ",
@@ -336,13 +380,28 @@ function deleteGradient(gradLoaction, index) {
 
     localStorage.setItem(
       gradLoaction ? "selectedGradients" : "gradientsHistory",
-      JSON.stringify(gradients)
+      JSON.stringify(gradients.reverse())
     );
     loadGradients();
-    console.log(`Gradient at index ${index} has been deleted.`);
-  } else {
-    console.log("Invalid index.");
+    liveToastMessage(
+      `${gradLoaction ? "Favourite" : "History"} Gradient at index ${
+        index + 1
+      } deleted.`,
+      gradientCode
+    );
   }
+}
+
+function gradNotExist(message) {
+  gradientContent.innerHTML = message;
+  gradientContent.style.padding = "50px";
+  gradientContent.style.color = "rgba(255, 0, 0, 0.596)";
+  // gradientContent.style.minHeight = "82vh";
+}
+
+function gradExist() {
+  gradientContent.style.padding = "10px";
+  gradientContent.style.color = "";
 }
 
 function savedPage() {
@@ -363,10 +422,11 @@ function savedPage() {
     "onclick",
     "homePage()"
   );
-  container.children[0].children[1].children[0].innerHTML = "Saved Gradients";
+  container.children[0].children[1].children[0].innerHTML =
+    "Favourite Gradients";
   container.children[0].children[1].children[1].setAttribute(
     "data-bs-title",
-    "Download Saved"
+    "Download Favourite"
   );
   container.children[0].children[1].children[1].setAttribute(
     "onclick",
@@ -374,7 +434,7 @@ function savedPage() {
   );
   container.children[0].children[2].setAttribute(
     "data-bs-title",
-    "Delete Saved"
+    "Delete Favourite"
   );
   container.children[0].children[2].setAttribute(
     "onclick",
@@ -393,7 +453,7 @@ function forBackground() {
   if (selectedGradients.length) {
     const randomGradient =
       selectedGradients[Math.floor(Math.random() * selectedGradients.length)];
-    const bgGradient = randomGradient.gradient.slice(11, -1);
+    const bgGradient = randomGradient.gradient.slice(12, -1);
     document.querySelector("body").style.background = bgGradient;
   } else {
     document.querySelector("body").style.background =
@@ -402,5 +462,30 @@ function forBackground() {
 }
 forBackground();
 
+function redirectToGradEditor(gradient) {
+  homePage();
+  gradientCode.value = gradient;
+  preview.style.background = gradient.slice(12, -1);
+  direction.value = gradient.slice(28, -2).split(", ")[0];
+
+  colorInputs[0].value = gradient.slice(28, -2).split(", ")[1];
+  colorInputs[1].value = gradient.slice(28, -2).split(", ")[2];
+
+  if (gradient.slice(28, -2).split(", ").length === 4) {
+    colorInputs[3] && removeColorInputs();
+    !colorInputs[2] && addColorInput();
+    colorInputs[2].value = gradient.slice(28, -2).split(", ")[3];
+  }
+  if (gradient.slice(28, -2).split(", ").length === 5) {
+    !colorInputs[2] && addColorInput();
+    !colorInputs[3] && addColorInput();
+    colorInputs[2].value = gradient.slice(28, -2).split(", ")[3];
+    colorInputs[3].value = gradient.slice(28, -2).split(", ")[4];
+  }
+  if (gradient.slice(28, -2).split(", ").length === 3) {
+    colorInputs[2] && removeColorInputs();
+  }
+  toolTipTrigger();
+}
 // Initialize with default preview
 generateRandomGradient();

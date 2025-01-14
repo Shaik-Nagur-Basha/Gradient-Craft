@@ -282,7 +282,8 @@ h1 {
   padding: 10px;
   flex-wrap: wrap;
   justify-content: center;
-  min-height: 87vh;
+  align-content: flex-start;
+  min-height: 82vh;
 }
 
 .gradientColor {
@@ -294,6 +295,9 @@ h1 {
   flex-direction: column;
   justify-content: end;
   position: relative;
+}
+
+.gradientColor b {
   cursor: pointer;
 }
 
