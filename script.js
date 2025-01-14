@@ -229,10 +229,13 @@ function savedToSelected() {
 }
 
 function saveGradientToSelected(selectedGradient) {
-  const selectedGradients =
-    JSON.parse(localStorage.getItem("selectedGradients")) || [];
-  selectedGradients.push(selectedGradient);
-  localStorage.setItem("selectedGradients", JSON.stringify(selectedGradients));
+  const favouriteGradients =
+    JSON.parse(localStorage.getItem("favouriteGradients")) || [];
+  favouriteGradients.push(selectedGradient);
+  localStorage.setItem(
+    "favouriteGradients",
+    JSON.stringify(favouriteGradients)
+  );
   liveToastMessage(
     "Successfully Gradient Favourited!",
     `${selectedGradient.gradient}`
@@ -246,15 +249,15 @@ function loadGradients() {
   let gradients;
   const gradientsHistory =
     JSON.parse(localStorage.getItem("gradientsHistory")) || [];
-  const selectedGradients =
-    JSON.parse(localStorage.getItem("selectedGradients")) || [];
+  const favouriteGradients =
+    JSON.parse(localStorage.getItem("favouriteGradients")) || [];
   gradientContent.innerHTML = ""; // Clear current list
 
   if (
     document.querySelector(".historyContainer").children[0].children[1]
       .children[0].innerHTML === "Favourite Gradients"
   ) {
-    gradients = selectedGradients;
+    gradients = favouriteGradients;
     gradLoaction = 1;
   } else {
     gradients = gradientsHistory;
@@ -273,9 +276,11 @@ function loadGradients() {
                               gradient.gradient
                             }')">${gradient.gradient.slice(28, -2)}</b>
                           </div>
-                          <div>Generated on: ${new Date(
-                            gradient.timestamp
-                          ).toLocaleString()}</div>
+                          <div>${
+                            gradient.timestamp &&
+                            "Generated on:" +
+                              new Date(gradient.timestamp).toLocaleString()
+                          }</div>
                           <div class="gradientDeleteIcon" onclick="deleteGradient(${gradLoaction}, ${index}, '${
         gradient.gradient
       }')">
@@ -293,48 +298,44 @@ function loadGradients() {
 
 function downloadGradientsHistory() {
   const gradientsHistory =
-    JSON.parse(localStorage.getItem("gradientsHistory")) || [];
-  const blob = new Blob([JSON.stringify(gradientsHistory, null, 2)], {
-    type: "application/json",
-  });
-  const link = document.createElement("a");
-  link.href = URL.createObjectURL(blob);
-  link.download = "gradientsHistory.json";
-  link.click();
-  liveToastMessage(
-    "Gradient History Downloaded!",
-    "Filename is gradientsHistory.json"
-  );
+    JSON.parse(localStorage.getItem("gradientsHistory")).map((color) => {
+      return color.gradient;
+    }) || [];
+  downloadGradientsAsZip("gradientsHistory", gradientsHistory);
+  liveToastMessage("Gradient History Downloaded!", "File gradientsHistory.zip");
 }
 
-function downloadSelectedGradients() {
-  const selectedGradients =
-    JSON.parse(localStorage.getItem("selectedGradients")) || [];
-  const blob = new Blob([JSON.stringify(selectedGradients, null, 2)], {
-    type: "application/json",
-  });
-  const link = document.createElement("a");
-  link.href = URL.createObjectURL(blob);
-  link.download = "selectedGradients.json";
-  link.click();
+function downloadfavouriteGradients() {
+  const favouriteGradients =
+    JSON.parse(localStorage.getItem("favouriteGradients")).map((color) => {
+      return color.gradient;
+    }) || [];
+  downloadGradientsAsZip("favouriteGradients", favouriteGradients);
   liveToastMessage(
     "Gradient Favourited Downloaded!",
-    "Filename is selectedGradients.json"
+    "File is favouriteGradients.zip"
   );
 }
 
 function downloadGradients() {
-  downloadGradientsHistory();
-  downloadSelectedGradients();
+  const favouriteGradients =
+    JSON.parse(localStorage.getItem("favouriteGradients")).map((color) => {
+      return color.gradient;
+    }) || [];
+  const gradientsHistory =
+    JSON.parse(localStorage.getItem("gradientsHistory")).map((color) => {
+      return color.gradient;
+    }) || [];
+  downloadAllGradientsAsZip(favouriteGradients, gradientsHistory);
   liveToastMessage(
     "History & Favourited Downloaded!",
-    "File names is gradientsHistory.json, selectedGradients.json"
+    "File gradientsCraft.zip"
   );
 }
 
 function clearGradients() {
   localStorage.removeItem("gradientsHistory");
-  localStorage.removeItem("selectedGradients");
+  localStorage.removeItem("favouriteGradients");
   loadGradients();
   liveToastMessage(
     "Successfully DELETED History & Favourite!",
@@ -351,8 +352,8 @@ function deleteGradientsHistory() {
   );
 }
 
-function deleteSelectedGradients() {
-  localStorage.removeItem("selectedGradients");
+function deletefavouriteGradients() {
+  localStorage.removeItem("favouriteGradients");
   loadGradients();
   liveToastMessage(
     "Successfully DELETED Favourite!",
@@ -372,14 +373,14 @@ function deleteGradient(gradLoaction, index, gradientCode) {
   const gradients =
     JSON.parse(
       localStorage.getItem(
-        gradLoaction ? "selectedGradients" : "gradientsHistory"
+        gradLoaction ? "favouriteGradients" : "gradientsHistory"
       )
     ) || [];
   if (index >= 0 && index < gradients.length) {
     gradients.reverse().splice(index, 1);
 
     localStorage.setItem(
-      gradLoaction ? "selectedGradients" : "gradientsHistory",
+      gradLoaction ? "favouriteGradients" : "gradientsHistory",
       JSON.stringify(gradients.reverse())
     );
     loadGradients();
@@ -430,7 +431,7 @@ function savedPage() {
   );
   container.children[0].children[1].children[1].setAttribute(
     "onclick",
-    "downloadSelectedGradients()"
+    "downloadfavouriteGradients()"
   );
   container.children[0].children[2].setAttribute(
     "data-bs-title",
@@ -438,7 +439,7 @@ function savedPage() {
   );
   container.children[0].children[2].setAttribute(
     "onclick",
-    "deleteSelectedGradients()"
+    "deletefavouriteGradients()"
   );
   container.children[1].innerHTML = "";
 
@@ -448,11 +449,11 @@ function savedPage() {
 }
 
 function forBackground() {
-  const selectedGradients =
-    JSON.parse(localStorage.getItem("selectedGradients")) || [];
-  if (selectedGradients.length) {
+  const favouriteGradients =
+    JSON.parse(localStorage.getItem("favouriteGradients")) || [];
+  if (favouriteGradients.length) {
     const randomGradient =
-      selectedGradients[Math.floor(Math.random() * selectedGradients.length)];
+      favouriteGradients[Math.floor(Math.random() * favouriteGradients.length)];
     const bgGradient = randomGradient.gradient.slice(12, -1);
     document.querySelector("body").style.background = bgGradient;
   } else {
@@ -487,5 +488,110 @@ function redirectToGradEditor(gradient) {
   }
   toolTipTrigger();
 }
+function generateGradientImage(gradient, width, height) {
+  const canvas = document.createElement("canvas");
+  canvas.width = width;
+  canvas.height = height;
+  const ctx = canvas.getContext("2d");
+
+  const direction = gradient.match(/to [a-z ]+/)?.[0] || "to bottom";
+  const colors = gradient.match(/#[0-9a-fA-F]{6}/g);
+
+  const directionsMap = {
+    "to bottom": [width / 2, 0, width / 2, height],
+    "to top": [width / 2, height, width / 2, 0],
+    "to left": [width, height / 2, 0, height / 2],
+    "to right": [0, height / 2, width, height / 2],
+    "to top left": [width, height, 0, 0],
+    "to top right": [0, height, width, 0],
+    "to bottom left": [width, 0, 0, height],
+    "to bottom right": [0, 0, width, height],
+  };
+  const coords = directionsMap[direction] || directionsMap["to bottom"];
+
+  const grd = ctx.createLinearGradient(...coords);
+  const step = 1 / (colors.length - 1);
+  colors.forEach((color, index) => {
+    grd.addColorStop(index * step, color);
+  });
+
+  ctx.fillStyle = grd;
+  ctx.fillRect(0, 0, width, height);
+
+  return canvas.toDataURL("image/png");
+}
+
+function downloadGradientsAsZip(
+  message,
+  gradients,
+  width = 1920,
+  height = 1080
+) {
+  const zip = new JSZip();
+  const folder = zip.folder(`${message}`); // Create a folder named 'gradients'
+  const blob = new Blob([JSON.stringify(gradients, null, 2)], {
+    type: "application/json",
+  });
+  zip.file(`${message}.json`, blob, { base64: true });
+
+  gradients.forEach((gradient, index) => {
+    const imageDataUrl = generateGradientImage(gradient, width, height);
+    const imgData = imageDataUrl.split(",")[1];
+    folder.file(`${gradient.slice(28, -2)}.png`, imgData, {
+      base64: true,
+    });
+  });
+
+  zip.generateAsync({ type: "blob" }).then((content) => {
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(content);
+    link.download = `${message}.zip`;
+    link.click();
+  });
+}
+
+function downloadAllGradientsAsZip(
+  favouriteGradients,
+  gradientsHistory,
+  width = 1920,
+  height = 1080
+) {
+  const zip = new JSZip();
+  const folder1 = zip.folder("favouriteGradients");
+  const folder2 = zip.folder("gradientsHistory");
+
+  const blob1 = new Blob([JSON.stringify(favouriteGradients, null, 2)], {
+    type: "application/json",
+  });
+  const blob2 = new Blob([JSON.stringify(gradientsHistory, null, 2)], {
+    type: "application/json",
+  });
+  zip.file(`favouriteGradients.json`, blob1, { base64: true });
+  zip.file(`gradientsHistory.json`, blob2, { base64: true });
+
+  gradientsHistory.forEach((gradient, index) => {
+    const imageDataUrl = generateGradientImage(gradient, width, height);
+    const imgData = imageDataUrl.split(",")[1];
+    folder1.file(`${gradient.slice(28, -2)}.png`, imgData, {
+      base64: true,
+    });
+  });
+
+  favouriteGradients.forEach((gradient, index) => {
+    const imageDataUrl = generateGradientImage(gradient, width, height);
+    const imgData = imageDataUrl.split(",")[1];
+    folder2.file(`${gradient.slice(28, -2)}.png`, imgData, {
+      base64: true,
+    });
+  });
+
+  zip.generateAsync({ type: "blob" }).then((content) => {
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(content);
+    link.download = `gradientsCraft.zip`;
+    link.click();
+  });
+}
+
 // Initialize with default preview
 generateRandomGradient();
