@@ -105,6 +105,7 @@ select {
   place-self: center;
   box-shadow: 2px 2px 4px black;
   border-radius: 10px;
+  text-wrap-mode: nowrap;
 }
 
 #rcb {
@@ -120,6 +121,7 @@ select {
 .gradientCraftHistory {
   cursor: pointer;
   color: rgba(255, 0, 0, 0.596);
+  text-wrap-mode: nowrap;
 }
 
 .gradientCraftHistory:hover {
@@ -146,6 +148,10 @@ select {
 
 .download-btn {
   place-self: end;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 2px;
 }
 
 @media (min-width: 1000px) {
@@ -503,7 +509,45 @@ h1 {
 #color2,
 #color3,
 #color4,
-select,
-option {
+select {
   cursor: pointer;
+}
+
+.importDiv {
+  position: absolute;
+  right: 0;
+  top: 15%;
+  background-color: rgba(0, 0, 0, 0.152);
+  display: flex;
+  gap: 5px;
+  padding: 7px;
+  padding-left: 10px;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  border-top-left-radius: 17px;
+  border-bottom-left-radius: 17px;
+}
+.importDiv:hover {
+  background-color: rgba(0, 0, 0, 0.21);
+  box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.795);
+}
+
+@media (max-width: 1000px) {
+  .importDiv {
+    top: 10%;
+    left: 0;
+    width: fit-content;
+    flex-direction: row;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    border-top-right-radius: 17px;
+    border-bottom-right-radius: 17px;
+  }
+}
+
+@media (max-width: 500px) {
+  .importDiv {
+    top: 8%;
+  }
 }

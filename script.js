@@ -28,6 +28,7 @@ let colorInputs = [color1, color2];
 color1.addEventListener("input", updatePreview);
 color2.addEventListener("input", updatePreview);
 direction.addEventListener("change", updatePreview);
+gradientCode.addEventListener("input", gradCodeInputChange);
 
 function updatePreview() {
   let gradDirection = direction.value;
@@ -54,6 +55,8 @@ function updatePreview() {
 
 function copyCode() {
   navigator.clipboard.writeText(gradientCode.value).then(() => {
+    const liveToast = document.querySelector("#liveToast");
+    liveToast.children[0].children[0].innerHTML = "Successfully Copied!";
     const toastBody = document.querySelector(".toast-body");
     toastBody.innerHTML = gradientCode.value;
     const toastTrigger = document.getElementById("liveToastBtn");
@@ -277,9 +280,10 @@ function loadGradients() {
                             }')">${gradient.gradient.slice(28, -2)}</b>
                           </div>
                           <div>${
-                            gradient.timestamp &&
-                            "Generated on:" +
-                              new Date(gradient.timestamp).toLocaleString()
+                            gradient.timestamp
+                              ? "Generated on:" +
+                                new Date(gradient.timestamp).toLocaleString()
+                              : ""
                           }</div>
                           <div class="gradientDeleteIcon" onclick="deleteGradient(${gradLoaction}, ${index}, '${
         gradient.gradient
@@ -298,19 +302,37 @@ function loadGradients() {
 
 function downloadGradientsHistory() {
   const gradientsHistory =
-    JSON.parse(localStorage.getItem("gradientsHistory")).map((color) => {
+    JSON.parse(localStorage.getItem("gradientsHistory")) || [];
+  if (!gradientsHistory.length) {
+    return liveToastMessage(
+      "<span style='color:red;'>Gradients Not found in History</span>",
+      "Generate Gradients then do download"
+    );
+  }
+  downloadGradientsAsZip(
+    "gradientsHistory",
+    gradientsHistory.map((color) => {
       return color.gradient;
-    }) || [];
-  downloadGradientsAsZip("gradientsHistory", gradientsHistory);
+    })
+  );
   liveToastMessage("Gradient History Downloaded!", "File gradientsHistory.zip");
 }
 
 function downloadfavouriteGradients() {
   const favouriteGradients =
-    JSON.parse(localStorage.getItem("favouriteGradients")).map((color) => {
+    JSON.parse(localStorage.getItem("favouriteGradients")) || [];
+  if (!favouriteGradients.length) {
+    return liveToastMessage(
+      "<span style='color:red;'>Gradients Not found in Favourites</span>",
+      "Save Gradients to Favourite then do download"
+    );
+  }
+  downloadGradientsAsZip(
+    "favouriteGradients",
+    favouriteGradients.map((color) => {
       return color.gradient;
-    }) || [];
-  downloadGradientsAsZip("favouriteGradients", favouriteGradients);
+    })
+  );
   liveToastMessage(
     "Gradient Favourited Downloaded!",
     "File is favouriteGradients.zip"
@@ -319,14 +341,24 @@ function downloadfavouriteGradients() {
 
 function downloadGradients() {
   const favouriteGradients =
-    JSON.parse(localStorage.getItem("favouriteGradients")).map((color) => {
-      return color.gradient;
-    }) || [];
+    JSON.parse(localStorage.getItem("favouriteGradients")) || [];
   const gradientsHistory =
-    JSON.parse(localStorage.getItem("gradientsHistory")).map((color) => {
+    JSON.parse(localStorage.getItem("gradientsHistory")) || [];
+
+  if (!favouriteGradients.length && !gradientsHistory.length) {
+    return liveToastMessage(
+      "<span style='color:red;'>Gradients Not found in Favourites & History</span>",
+      "Save Gradients to Favourite & Generate Gradients then do download"
+    );
+  }
+  downloadAllGradientsAsZip(
+    favouriteGradients.map((color) => {
       return color.gradient;
-    }) || [];
-  downloadAllGradientsAsZip(favouriteGradients, gradientsHistory);
+    }),
+    gradientsHistory.map((color) => {
+      return color.gradient;
+    })
+  );
   liveToastMessage(
     "History & Favourited Downloaded!",
     "File gradientsCraft.zip"
@@ -451,10 +483,13 @@ function savedPage() {
 function forBackground() {
   const favouriteGradients =
     JSON.parse(localStorage.getItem("favouriteGradients")) || [];
+  // console.log(favouriteGradients);
   if (favouriteGradients.length) {
     const randomGradient =
       favouriteGradients[Math.floor(Math.random() * favouriteGradients.length)];
+    // console.log(randomGradient);
     const bgGradient = randomGradient.gradient.slice(12, -1);
+
     document.querySelector("body").style.background = bgGradient;
   } else {
     document.querySelector("body").style.background =
@@ -467,27 +502,54 @@ function redirectToGradEditor(gradient) {
   homePage();
   gradientCode.value = gradient;
   preview.style.background = gradient.slice(12, -1);
-  direction.value = gradient.slice(28, -2).split(", ")[0];
+  const gradCodeArray = gradient.slice(28, -2).split(", ");
+  direction.value = gradCodeArray[0];
 
-  colorInputs[0].value = gradient.slice(28, -2).split(", ")[1];
-  colorInputs[1].value = gradient.slice(28, -2).split(", ")[2];
+  colorInputs[0].value = gradCodeArray[1];
+  colorInputs[1].value = gradCodeArray[2];
 
-  if (gradient.slice(28, -2).split(", ").length === 4) {
+  if (gradCodeArray.length === 4) {
     colorInputs[3] && removeColorInputs();
     !colorInputs[2] && addColorInput();
-    colorInputs[2].value = gradient.slice(28, -2).split(", ")[3];
+    colorInputs[2].value = gradCodeArray[3];
   }
-  if (gradient.slice(28, -2).split(", ").length === 5) {
+  if (gradCodeArray.length === 5) {
     !colorInputs[2] && addColorInput();
     !colorInputs[3] && addColorInput();
-    colorInputs[2].value = gradient.slice(28, -2).split(", ")[3];
-    colorInputs[3].value = gradient.slice(28, -2).split(", ")[4];
+    colorInputs[2].value = gradCodeArray[3];
+    colorInputs[3].value = gradCodeArray[4];
   }
-  if (gradient.slice(28, -2).split(", ").length === 3) {
+  if (gradCodeArray.length === 3) {
     colorInputs[2] && removeColorInputs();
   }
   toolTipTrigger();
 }
+
+function gradCodeInputChange() {
+  preview.style.background = gradientCode.value.slice(12, -1);
+  const gradCodeArray = gradientCode.value.slice(28, -2).split(", ");
+  direction.value = gradCodeArray[0];
+
+  colorInputs[0].value = gradCodeArray[1];
+  colorInputs[1].value = gradCodeArray[2];
+
+  if (gradCodeArray.length === 4) {
+    colorInputs[3] && removeColorInputs();
+    !colorInputs[2] && addColorInput();
+    colorInputs[2].value = gradCodeArray[3];
+  }
+  if (gradCodeArray.length === 5) {
+    !colorInputs[2] && addColorInput();
+    !colorInputs[3] && addColorInput();
+    colorInputs[2].value = gradCodeArray[3];
+    colorInputs[3].value = gradCodeArray[4];
+  }
+  if (gradCodeArray.length === 3) {
+    colorInputs[2] && removeColorInputs();
+  }
+  toolTipTrigger();
+}
+
 function generateGradientImage(gradient, width, height) {
   const canvas = document.createElement("canvas");
   canvas.width = width;
@@ -529,9 +591,20 @@ function downloadGradientsAsZip(
 ) {
   const zip = new JSZip();
   const folder = zip.folder(`${message}`); // Create a folder named 'gradients'
-  const blob = new Blob([JSON.stringify(gradients, null, 2)], {
-    type: "application/json",
-  });
+  const blob = new Blob(
+    [
+      JSON.stringify(
+        gradients.map((gradient) => {
+          return { gradient: gradient };
+        }),
+        null,
+        2
+      ),
+    ],
+    {
+      type: "application/json",
+    }
+  );
   zip.file(`${message}.json`, blob, { base64: true });
 
   gradients.forEach((gradient, index) => {
@@ -560,12 +633,34 @@ function downloadAllGradientsAsZip(
   const folder1 = zip.folder("favouriteGradients");
   const folder2 = zip.folder("gradientsHistory");
 
-  const blob1 = new Blob([JSON.stringify(favouriteGradients, null, 2)], {
-    type: "application/json",
-  });
-  const blob2 = new Blob([JSON.stringify(gradientsHistory, null, 2)], {
-    type: "application/json",
-  });
+  const blob1 = new Blob(
+    [
+      JSON.stringify(
+        favouriteGradients.map((gradient) => {
+          return { gradient: gradient };
+        }),
+        null,
+        2
+      ),
+    ],
+    {
+      type: "application/json",
+    }
+  );
+  const blob2 = new Blob(
+    [
+      JSON.stringify(
+        gradientsHistory.map((gradient) => {
+          return { gradient: gradient };
+        }),
+        null,
+        2
+      ),
+    ],
+    {
+      type: "application/json",
+    }
+  );
   zip.file(`favouriteGradients.json`, blob1, { base64: true });
   zip.file(`gradientsHistory.json`, blob2, { base64: true });
 
@@ -592,6 +687,101 @@ function downloadAllGradientsAsZip(
     link.click();
   });
 }
+
+document.querySelector(".importDiv").addEventListener("click", function () {
+  document.getElementById("fileInput").click();
+});
+
+document
+  .getElementById("fileInput")
+  .addEventListener("change", function (event) {
+    document.querySelector(".importDiv").children[0].style.display = "none";
+    document.querySelector(".importDiv").children[1].innerHTML =
+      "Importing ...";
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        try {
+          const gradientsArray = JSON.parse(e.target.result);
+
+          // Allowed directions
+          const allowedDirections = [
+            "to right",
+            "to bottom",
+            "to top right",
+            "to bottom right",
+            "to top",
+            "to left",
+            "to top left",
+          ];
+
+          // Validate gradient format
+          const validGradients = gradientsArray.filter((gradient) => {
+            const regex =
+              /^background:\s*linear-gradient\(([^,]+),\s*(#[0-9a-fA-F]{6}(,\s*#[0-9a-fA-F]{6}){1,3})\);?$/;
+            const match = gradient.gradient.match(regex);
+
+            if (!match) {
+              document.querySelector(".importDiv").children[0].style.display =
+                "inline-block";
+              document.querySelector(".importDiv").children[1].innerHTML =
+                "Import";
+              return liveToastMessage(
+                '<span style="color:red;">Format not matched!</span>',
+                "[ { 'gradient': 'background: linear-gradient(to left, #d2681f, #de45ac);'}, ...]"
+              );
+            }
+
+            const [_, direction, colors] = match;
+            const colorsCount = colors.split(",").length;
+
+            return (
+              allowedDirections.includes(direction.trim()) &&
+              colorsCount >= 2 &&
+              colorsCount <= 4
+            );
+          });
+
+          if (validGradients.length > 0) {
+            const favouriteGradients =
+              JSON.parse(localStorage.getItem("favouriteGradients")) || [];
+            validGradients.map((grad) => favouriteGradients.push(grad));
+            localStorage.setItem(
+              "favouriteGradients",
+              JSON.stringify(favouriteGradients)
+            );
+            document.querySelector(".importDiv").children[0].style.display =
+              "inline-block";
+            document.querySelector(".importDiv").children[1].innerHTML =
+              "Import";
+            liveToastMessage(
+              "Imported Successfully!",
+              "Gradients were successfully imported to Favorites"
+            );
+          } else {
+            document.querySelector(".importDiv").children[0].style.display =
+              "inline-block";
+            document.querySelector(".importDiv").children[1].innerHTML =
+              "Import";
+            liveToastMessage(
+              '<span style="color:red;">Not Imported Successfully!</span>',
+              "No valid gradients found in the imported File"
+            );
+          }
+        } catch (error) {
+          document.querySelector(".importDiv").children[0].style.display =
+            "inline-block";
+          document.querySelector(".importDiv").children[1].innerHTML = "Import";
+          liveToastMessage(
+            '<span style="color:red;">Not Imported Successfully!</span>',
+            "Invalid JSON file"
+          );
+        }
+      };
+      reader.readAsText(file);
+    }
+  });
 
 // Initialize with default preview
 generateRandomGradient();
