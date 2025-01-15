@@ -92,11 +92,14 @@ Easily switch between color formats or use gradient-specific CSS snippets for se
 
 ## 📸 Screenshots
 
-![image](https://github.com/user-attachments/assets/d2cc2850-5604-46f2-9da2-2e4205d7be7e)
+![image](https://github.com/user-attachments/assets/b40a093f-46f5-4e7c-ad76-e6543ed68c53)
 
-![image](https://github.com/user-attachments/assets/b41b9828-8b4a-4303-b27d-72fe651f7c91)
+![image](https://github.com/user-attachments/assets/1a5f8de5-0544-466b-8f2f-061ee038346f)
 
 ![image](https://github.com/user-attachments/assets/539a5e8d-9fe2-43e9-97ec-5a023e59565e)
+
+![image](https://github.com/user-attachments/assets/eba61005-1ca5-43bf-aa60-8c2b54f9f18b)
+
 _A sleek and simple interface for crafting stunning gradients._
 
 ---
