@@ -500,6 +500,10 @@ forBackground();
 
 function redirectToGradEditor(gradient) {
   homePage();
+  titles[0].style.background = gradient.slice(12, -1);
+  titles[0].style.webkitBackgroundClip = "text";
+  titles[0].style.color = "transparent";
+  gc.style.background = gradient.slice(12, -1);
   gradientCode.value = gradient;
   preview.style.background = gradient.slice(12, -1);
   const gradCodeArray = gradient.slice(28, -2).split(", ");
@@ -526,6 +530,10 @@ function redirectToGradEditor(gradient) {
 }
 
 function gradCodeInputChange() {
+  titles[0].style.background = gradientCode.value.slice(12, -1);
+  titles[0].style.webkitBackgroundClip = "text";
+  titles[0].style.color = "transparent";
+  gc.style.background = gradientCode.value.slice(12, -1);
   preview.style.background = gradientCode.value.slice(12, -1);
   const gradCodeArray = gradientCode.value.slice(28, -2).split(", ");
   direction.value = gradCodeArray[0];
