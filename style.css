@@ -307,12 +307,14 @@ h1 {
   cursor: pointer;
 }
 
-.gradientColor div {
+.gradientColor div,
+.gradientColor .btn-sm {
   font-size: x-small;
   display: none;
 }
 
-.gradientColor:hover div {
+.gradientColor:hover div,
+.gradientColor:hover .btn-sm {
   display: flex;
 }
 
@@ -324,11 +326,19 @@ h1 {
   padding: 5px;
   color: rgba(255, 0, 0, 0.596);
   position: absolute;
-  top: 10px;
-  right: 10px;
+  top: 5px;
+  right: 5px;
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.gradientColor .btn-sm {
+  cursor: pointer;
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  font-size: x-small;
 }
 
 .gradientDeleteIcon:hover,
@@ -375,12 +385,15 @@ h1 {
     font-size: 7.5px;
   }
 
+  .gradientColor .btn-sm {
+    font-size: xx-small;
+    padding: 0.5px 4px;
+    border-radius: 4px;
+  }
   .gradientDeleteIcon {
     width: 20px;
     height: 20px;
     padding: 4px;
-    top: 5px;
-    right: 5px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -395,13 +408,15 @@ h1 {
   .gradientColor div {
     font-size: 6px;
   }
-
+  .gradientColor .btn-sm {
+    font-size: 7.5px;
+    padding: 0 3px;
+    border-radius: 3px;
+  }
   .gradientDeleteIcon {
     width: 15px;
     height: 15px;
     padding: 3px;
-    top: 5px;
-    right: 5px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -472,6 +487,14 @@ h1 {
   }
   .gradientColor div {
     font-size: 3.5px;
+  }
+
+  .gradientColor .btn-sm {
+    top: 4px;
+    left: 4px;
+    font-size: 6px;
+    padding: 0 2px;
+    border-radius: 2px;
   }
 
   .gradientDeleteIcon {
