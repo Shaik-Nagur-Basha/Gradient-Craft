@@ -184,6 +184,7 @@ function generateRandomGradient() {
       JSON.parse(localStorage.getItem("gradientsHistory")) || [];
     validGradients.map((grad) => gradientsHistory.push(grad));
     localStorage.setItem("gradientsHistory", JSON.stringify(gradientsHistory));
+liveToastMessage(`${count} Gradients Generated Successfully!", "Switch to History Page For Generated Gradients.");
 
     colorInputs.forEach(
       (input, index) =>
