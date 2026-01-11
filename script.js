@@ -12,6 +12,28 @@ function toolTipTrigger() {
   });
 }
 toolTipTrigger();
+updatePixelResolution();
+
+function toggleResolutionInputs() {
+  const container = document.getElementById("pixelResolutionContainer");
+  const isExpanded = container.classList.contains("expanded");
+
+  if (isExpanded) {
+    container.classList.remove("expanded");
+  } else {
+    container.classList.add("expanded");
+    // Focus on width input when expanded
+    setTimeout(() => document.getElementById("pixelWidth").focus(), 100);
+  }
+}
+
+// Close expanded view when clicking outside
+document.addEventListener("click", function (event) {
+  const container = document.getElementById("pixelResolutionContainer");
+  if (container && !container.contains(event.target)) {
+    container.classList.remove("expanded");
+  }
+});
 
 const color1 = document.getElementById("color1");
 const color2 = document.getElementById("color2");
@@ -39,6 +61,29 @@ color1.addEventListener("input", debounce(updatePreview, 300));
 color2.addEventListener("input", debounce(updatePreview, 300));
 direction.addEventListener("change", debounce(updatePreview, 300));
 gradientCode.addEventListener("input", debounce(gradCodeInputChange, 300));
+
+function updatePixelResolution() {
+  const width = document.getElementById("pixelWidth").value;
+  const height = document.getElementById("pixelHeight").value;
+
+  if (width && height && width > 0 && height > 0) {
+    const resolution = {
+      width: parseInt(width),
+      height: parseInt(height),
+    };
+
+    // console.log("Pixel Resolution Updated:", resolution);
+    // console.log(`Resolution: ${resolution.width} × ${resolution.height}`);
+    //  // console.log(
+    //     `Aspect Ratio: ${(resolution.width / resolution.height).toFixed(4)}`
+    //   );
+    //  // console.log(
+    //     `Total Pixels: ${(resolution.width * resolution.height).toLocaleString()}`
+    //   );
+    // console.log(`DPI Comparison: ${resolution.width}p width`);
+  }
+}
+
 function updatePercentageValue(value) {
   document.getElementById("percentageValue").innerHTML = value;
   document.querySelector("#percentageValue").nextElementSibling.innerHTML =
@@ -184,7 +229,10 @@ function generateRandomGradient() {
       JSON.parse(localStorage.getItem("gradientsHistory")) || [];
     validGradients.map((grad) => gradientsHistory.push(grad));
     localStorage.setItem("gradientsHistory", JSON.stringify(gradientsHistory));
-liveToastMessage(`${count} Gradients Generated Successfully!`, "Switch to History Page For Generated Gradients.");
+    liveToastMessage(
+      `${count} Gradients Generated Successfully!`,
+      "Switch to History Page For Generated Gradients."
+    );
 
     colorInputs.forEach(
       (input, index) =>
@@ -445,7 +493,7 @@ function deletefavouriteGradients() {
 }
 
 function deleteGradient(gradLoaction, index, gradientCode) {
-  // console.log(
+  //// console.log(
   //   "After Trigger",
   //   "gradLoaction = ",
   //   gradLoaction,
@@ -534,11 +582,11 @@ function savedPage() {
 function forBackground() {
   const favouriteGradients =
     JSON.parse(localStorage.getItem("favouriteGradients")) || [];
-  // console.log(favouriteGradients);
+  //// console.log(favouriteGradients);
   if (favouriteGradients.length) {
     const randomGradient =
       favouriteGradients[Math.floor(Math.random() * favouriteGradients.length)];
-    // console.log(randomGradient);
+    //// console.log(randomGradient);
     const bgGradient = randomGradient.gradient.slice(12, -1);
 
     document.querySelector("body").style.background = bgGradient;
@@ -844,3 +892,69 @@ document
 
 // Initialize with default preview
 generateRandomGradient();
+
+function getUrlValues() {
+  //// console.log("enter to getUrlValues");
+
+  const keys = [
+    "direction",
+    "color1",
+    "color2",
+    "color3",
+    "color4",
+    "width",
+    "height",
+  ];
+
+  const urlParams = new URLSearchParams(window.location.search);
+  const result = {};
+
+  keys.forEach((key) => {
+    const value = urlParams.get(key);
+    if (value !== null) {
+      result[key] = value;
+    }
+  });
+  //// console.log("end to getUrlValues");
+
+  return result;
+}
+
+function generateGradientFromUrl() {
+  //// console.log("enter to generateGradientFromUrl");
+
+  const values = getUrlValues();
+  const direction = values.direction;
+  const colors = [
+    values.color1,
+    values.color2,
+    values.color3,
+    values.color4,
+  ].filter(Boolean);
+  const width = parseInt(values.width);
+  const height = parseInt(values.height);
+
+  if (colors.length < 2) {
+    // console.error("At least two colors are required to generate a gradient.");
+    return;
+  }
+
+  const gradientStyle = `linear-gradient(${direction}, ${colors.join(", ")})`;
+  const imageDataUrl = generateGradientImage(
+    `background:${gradientStyle}`,
+    width,
+    height
+  );
+  const link = document.createElement("a");
+  link.href = imageDataUrl;
+  link.download = "gradient.png";
+  link.click();
+  // console.log("end to generateGradientFromUrl");
+}
+
+window.onload = () => {
+  // console.log("enter to onload");
+
+  generateGradientFromUrl();
+  // console.log("after to onload");
+};
