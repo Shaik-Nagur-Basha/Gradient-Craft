@@ -60,6 +60,23 @@ function updatePixelResolution() {
   }
 }
 
+function swapResolution() {
+  const widthInput = document.getElementById("pixelWidth");
+  const heightInput = document.getElementById("pixelHeight");
+  const exchangeIcon = document.getElementsByClassName("exchange-icon");
+  exchangeIcon[0].style.transform =
+    exchangeIcon[0].style.transform === "rotate(180deg)"
+      ? "rotate(0deg)"
+      : "rotate(180deg)";
+
+  if (widthInput && heightInput) {
+    const temp = widthInput.value;
+    widthInput.value = heightInput.value;
+    heightInput.value = temp;
+    updatePixelResolution();
+  }
+}
+
 // ============================================
 // PREVIEW & GRADIENT FUNCTIONS
 // ============================================
