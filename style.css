@@ -467,6 +467,10 @@ h1 {
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15); */
   }
 
+  .resolution-right-icon {
+    margin: 0 10px;
+  }
+
   .pixelResolutionContainer.expanded {
     padding: 8px 10px;
   }
@@ -747,4 +751,84 @@ select {
   .importDiv {
     top: 8%;
   }
+}
+
+.resolution-selector {
+  position: absolute;
+  top: 55px;
+  right: 0;
+  left: 55px;
+  width: max-content;
+  background: linear-gradient(
+    135deg,
+    rgba(30, 58, 138, 0.95) 0%,
+    rgba(15, 50, 120, 0.95) 100%
+  );
+  border: 1px solid rgba(100, 150, 255, 0.3);
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  z-index: 1000;
+  padding: 12px 0;
+  font-family: system-ui, sans-serif;
+  display: grid;
+  backdrop-filter: blur(10px);
+}
+
+.resolution-selector label {
+  display: flex;
+  align-items: center;
+  padding: 10px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 1px solid transparent;
+  margin: 0 8px;
+}
+
+.resolution-selector label:hover {
+  background: rgba(100, 150, 255, 0.2);
+  border-color: rgba(100, 150, 255, 0.4);
+  transform: translateX(4px);
+}
+
+.resolution-selector span:hover {
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.resolution-selector input {
+  display: none;
+}
+
+.resolution-selector span {
+  font-size: 13px;
+  color: rgba(200, 220, 255, 0.7);
+  font-weight: 500;
+  transition: 0.2s ease;
+}
+
+.resolution-selector input:checked + span {
+  color: #ffffff;
+  font-weight: 600;
+  text-shadow: 0 0 10px rgba(100, 150, 255, 0.5);
+}
+
+.resolution-selector.hidden {
+  display: none;
+}
+
+.resolution-right-icon {
+  transform: rotate(90deg);
+  cursor: pointer;
+  color: rgba(0, 100, 200, 0.7);
+  font-size: 20px;
+  transition: all 0.3s ease;
+  user-select: none;
+}
+
+.resolution-right-icon:hover {
+  color: rgba(0, 150, 255, 1);
+  transform: rotate(90deg) scale(1.2);
+  text-shadow: 0 0 8px rgba(0, 150, 255, 0.5);
 }

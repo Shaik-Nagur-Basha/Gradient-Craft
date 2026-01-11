@@ -952,9 +952,63 @@ function generateGradientFromUrl() {
   // console.log("end to generateGradientFromUrl");
 }
 
-window.onload = () => {
-  // console.log("enter to onload");
+function toggleResOptions() {
+  const box = document.getElementById("resolutionBox");
+  if (box) {
+    box.classList.toggle("hidden");
+  }
+}
 
+// Initialize resolution selector after DOM is ready
+document.addEventListener("DOMContentLoaded", function () {
+  // Add event listeners to resolution radio buttons
+  const resolutionRadios = document.querySelectorAll('input[name="res"]');
+  if (resolutionRadios && resolutionRadios.length > 0) {
+    resolutionRadios.forEach((radio) => {
+      radio.addEventListener("change", function () {
+        if (this.checked) {
+          const widthValue = this.getAttribute("data-x");
+          const heightValue = this.getAttribute("data-y");
+          const pixelWidth = document.getElementById("pixelWidth");
+          const pixelHeight = document.getElementById("pixelHeight");
+
+          if (pixelWidth && pixelHeight) {
+            pixelWidth.value = widthValue;
+            pixelHeight.value = heightValue;
+            updatePixelResolution();
+            // Close the selector after selection
+            const selector = document.getElementById("resolutionBox");
+            if (selector) {
+              selector.classList.add("hidden");
+            }
+          }
+        }
+      });
+    });
+  }
+
+  // Close resolution selector when clicking outside
+  document.addEventListener("click", function (event) {
+    const selector = document.getElementById("resolutionBox");
+    const icon = document.getElementById("openSelector");
+    const container = document.getElementById("pixelResolutionContainer");
+
+    if (selector && icon && container) {
+      if (
+        !container.contains(event.target) &&
+        !selector.contains(event.target)
+      ) {
+        selector.classList.add("hidden");
+      }
+    }
+  });
+});
+
+// Consolidate initialization
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", function () {
+    generateGradientFromUrl();
+  });
+} else {
   generateGradientFromUrl();
-  // console.log("after to onload");
-};
+}

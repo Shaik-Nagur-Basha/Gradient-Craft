@@ -236,6 +236,40 @@
             onchange="updatePixelResolution()"
           />
         </div>
+        <!-- Icon Button -->
+        <div class="resolution-right-icon" id="openSelector" onclick="toggleResOptions()">❯</div>
+        <!-- Hidden Selector -->
+        <div class="resolution-selector hidden" id="resolutionBox">
+          <label>
+            <input type="radio" name="res" data-x="720" data-y="1280" />
+            <span>720 × 1280 (HD)</span>
+          </label>
+
+          <label>
+            <input type="radio" name="res" data-x="1080" data-y="1920" />
+            <span>1080 × 1920 (Full HD)</span>
+          </label>
+
+          <label>
+            <input type="radio" name="res" data-x="1080" data-y="2340" />
+            <span>1080 × 2340 (FHD+)</span>
+          </label>
+
+          <label>
+            <input type="radio" name="res" data-x="2560" data-y="1440" />
+            <span>2560 × 1440 (2K)</span>
+          </label>
+
+          <label>
+            <input type="radio" name="res" data-x="3840" data-y="2160" />
+            <span>3840 × 2160 (4K UHD)</span>
+          </label>
+
+          <label>
+            <input type="radio" name="res" data-x="7680" data-y="4320" />
+            <span>7680 × 4320 (8K UHD)</span>
+          </label>
+        </div>
       </div>
       <div
         class="gradientsDeleteIconOnCraft"
