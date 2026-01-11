@@ -505,6 +505,82 @@
       </div>
     </div>
 
+    <!-- Download Confirmation Modal -->
+    <div id="downloadConfirmModal" class="download-confirm-modal">
+      <div class="modal-backdrop-download"></div>
+      <div class="modal-container-download">
+        <div class="modal-header-download">
+          <div class="modal-icon-wrapper-download">
+            <svg
+              class="modal-icon-download"
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm3.5-9H13V5.5h-2V11H8.5l3.5 3.5 3.5-3.5z"
+                fill="currentColor"
+              />
+            </svg>
+          </div>
+        </div>
+        <div class="modal-content-download">
+          <h2 class="modal-title-download">Download Gradients</h2>
+          <p class="modal-message-download">
+            Select how many <span id="downloadType">gradients</span> to download
+          </p>
+
+          <div class="quantity-selector">
+            <label class="quantity-label"
+              >Number of Gradients to Download:</label
+            >
+            <div class="quantity-controls">
+              <button class="qty-btn qty-minus" onclick="decreaseDownloadQty()">
+                −
+              </button>
+              <input
+                type="number"
+                id="downloadQuantity"
+                class="qty-input"
+                min="1"
+                max="100"
+                value="1"
+                onchange="validateDownloadQty()"
+              />
+              <button class="qty-btn qty-plus" onclick="increaseDownloadQty()">
+                +
+              </button>
+            </div>
+            <div class="qty-info">
+              <span id="qtyInfo"
+                >Total available: <span id="totalAvailable">0</span></span
+              >
+            </div>
+          </div>
+
+          <div class="download-options">
+            <label class="option-checkbox">
+              <input type="checkbox" id="includeJSON" checked />
+              <span>Include JSON file</span>
+            </label>
+            <label class="option-checkbox">
+              <input type="checkbox" id="includePNG" checked />
+              <span>Include PNG images</span>
+            </label>
+          </div>
+        </div>
+        <div class="modal-footer-download">
+          <button
+            class="btn-cancel-download"
+            onclick="closeDownloadConfirmModal()"
+          >
+            Cancel
+          </button>
+          <button class="btn-download" id="confirmDownloadBtn">Download</button>
+        </div>
+      </div>
+    </div>
+
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     <script

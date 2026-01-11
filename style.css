@@ -1198,3 +1198,520 @@ select {
     font-size: 13px;
   }
 }
+/* ============================================ */
+/* Download Confirmation Modal Styles */
+/* ============================================ */
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes fadeInBackdropDownload {
+  from {
+    opacity: 0;
+    backdrop-filter: blur(0px);
+  }
+  to {
+    opacity: 1;
+    backdrop-filter: blur(4px);
+  }
+}
+
+@keyframes downloadIconFloat {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+@keyframes downloadArrowBounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(4px);
+  }
+}
+
+@keyframes buttonDownloadGlow {
+  0% {
+    box-shadow: 0 0 10px rgba(40, 167, 69, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(40, 167, 69, 0.8);
+  }
+  100% {
+    box-shadow: 0 0 10px rgba(40, 167, 69, 0.5);
+  }
+}
+
+@keyframes qtyBorderPulse {
+  0%,
+  100% {
+    border-color: rgba(40, 167, 69, 0.3);
+    box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.1);
+  }
+  50% {
+    border-color: rgba(40, 167, 69, 0.6);
+    box-shadow: 0 0 8px rgba(40, 167, 69, 0.2);
+  }
+}
+
+.download-confirm-modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 10000;
+  align-items: center;
+  justify-content: center;
+}
+
+.download-confirm-modal.show {
+  display: flex;
+}
+
+.modal-backdrop-download {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  animation: fadeInBackdropDownload 0.3s ease-out;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.modal-backdrop-download:hover {
+  background: rgba(0, 0, 0, 0.6);
+}
+
+.modal-container-download {
+  position: relative;
+  background: linear-gradient(135deg, #ffffff 0%, #f5f5f5 100%);
+  border-radius: 16px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3),
+    0 0 0 1px rgba(255, 255, 255, 0.3) inset, 0 0 30px rgba(40, 167, 69, 0.15);
+  max-width: 500px;
+  width: 90%;
+  z-index: 10001;
+  animation: slideInUp 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  overflow: hidden;
+  border: 1px solid rgba(40, 167, 69, 0.2);
+}
+
+.modal-header-download {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 30px 20px 20px;
+  background: linear-gradient(
+    135deg,
+    rgba(40, 167, 69, 0.08) 0%,
+    rgba(23, 162, 184, 0.05) 100%
+  );
+  border-bottom: 1px solid rgba(40, 167, 69, 0.1);
+}
+
+.modal-icon-wrapper-download {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  background: linear-gradient(
+    135deg,
+    rgba(40, 167, 69, 0.15) 0%,
+    rgba(40, 167, 69, 0.08) 100%
+  );
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid rgba(40, 167, 69, 0.3);
+  animation: downloadIconFloat 2s ease-in-out infinite;
+  position: relative;
+}
+
+.modal-icon-wrapper-download::before {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 2px solid rgba(40, 167, 69, 0.2);
+  animation: scale 2s ease-out infinite;
+}
+
+.modal-icon-download {
+  width: 40px;
+  height: 40px;
+  color: #28a745;
+  stroke-width: 0.5;
+  animation: downloadArrowBounce 2s ease-in-out infinite;
+}
+
+.modal-content-download {
+  padding: 30px 25px;
+}
+
+.modal-title-download {
+  font-size: 24px;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 0 0 12px 0;
+  letter-spacing: -0.5px;
+  animation: slideInUp 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 0.1s both;
+}
+
+.modal-message-download {
+  font-size: 15px;
+  color: #666666;
+  margin: 0 0 25px 0;
+  line-height: 1.5;
+  animation: slideInUp 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s both;
+}
+
+.modal-message-download span {
+  font-weight: 600;
+  color: #28a745;
+  background: rgba(40, 167, 69, 0.1);
+  padding: 2px 6px;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+}
+
+.modal-message-download:hover span {
+  background: rgba(40, 167, 69, 0.15);
+  color: #218838;
+}
+
+.quantity-selector {
+  background: linear-gradient(
+    135deg,
+    rgba(40, 167, 69, 0.05) 0%,
+    rgba(23, 162, 184, 0.03) 100%
+  );
+  border: 1px solid rgba(40, 167, 69, 0.15);
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 20px;
+  animation: slideInUp 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 0.3s both;
+}
+
+.quantity-label {
+  display: block;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin-bottom: 12px;
+  font-size: 14px;
+}
+
+.quantity-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.qty-btn {
+  width: 38px;
+  height: 38px;
+  border: 2px solid rgba(40, 167, 69, 0.3);
+  background: white;
+  color: #28a745;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 18px;
+  font-weight: bold;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.qty-btn:hover {
+  background: linear-gradient(
+    135deg,
+    rgba(40, 167, 69, 0.1) 0%,
+    rgba(40, 167, 69, 0.05) 100%
+  );
+  border-color: rgba(40, 167, 69, 0.6);
+  color: #218838;
+  transform: scale(1.05);
+  box-shadow: 0 4px 8px rgba(40, 167, 69, 0.15);
+}
+
+.qty-btn:active {
+  transform: scale(0.98);
+}
+
+.qty-input {
+  flex: 1;
+  padding: 10px 15px;
+  border: 2px solid rgba(40, 167, 69, 0.3);
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #28a745;
+  text-align: center;
+  transition: all 0.3s ease;
+  background: white;
+  animation: qtyBorderPulse 2s ease-in-out infinite;
+}
+
+.qty-input:focus {
+  outline: none;
+  border-color: #28a745;
+  box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.1);
+}
+
+.qty-input:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  background: #f0f0f0;
+}
+
+.qty-info {
+  font-size: 13px;
+  color: #666666;
+  font-weight: 500;
+}
+
+.download-options {
+  background: linear-gradient(
+    135deg,
+    rgba(23, 162, 184, 0.05) 0%,
+    rgba(40, 167, 69, 0.03) 100%
+  );
+  border: 1px solid rgba(23, 162, 184, 0.15);
+  border-radius: 10px;
+  padding: 18px;
+  animation: slideInUp 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 0.4s both;
+}
+
+.option-checkbox {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  margin-bottom: 12px;
+  transition: all 0.3s ease;
+  padding: 8px;
+  border-radius: 6px;
+}
+
+.option-checkbox:last-child {
+  margin-bottom: 0;
+}
+
+.option-checkbox:hover {
+  background: rgba(40, 167, 69, 0.05);
+}
+
+.option-checkbox input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  margin-right: 10px;
+  cursor: pointer;
+  accent-color: #28a745;
+  transition: all 0.3s ease;
+}
+
+.option-checkbox input[type="checkbox"]:hover {
+  transform: scale(1.1);
+}
+
+.option-checkbox span {
+  font-weight: 500;
+  color: #1a1a1a;
+  user-select: none;
+}
+
+.modal-footer-download {
+  display: flex;
+  gap: 12px;
+  padding: 20px 25px 25px;
+  justify-content: flex-end;
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(0, 0, 0, 0.01) 100%
+  );
+}
+
+.btn-cancel-download,
+.btn-download {
+  padding: 10px 24px;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  outline: none;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-cancel-download {
+  background: linear-gradient(135deg, #e9ecef 0%, #dee2e6 100%);
+  color: #495057;
+  border: 1px solid #dee2e6;
+}
+
+.btn-cancel-download:hover {
+  background: linear-gradient(135deg, #dee2e6 0%, #ced4da 100%);
+  color: #212529;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+
+.btn-cancel-download:active {
+  transform: translateY(0);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+}
+
+.btn-download {
+  background: linear-gradient(135deg, #28a745 0%, #218838 100%);
+  color: white;
+  border: 1px solid #1e7e34;
+  box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+}
+
+.btn-download:hover {
+  background: linear-gradient(135deg, #32b94b 0%, #28a745 100%);
+  color: white;
+  transform: translateY(-2px);
+  animation: buttonDownloadGlow 1.5s ease-in-out infinite;
+}
+
+.btn-download:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 6px rgba(40, 167, 69, 0.5);
+}
+
+.btn-download:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  animation: none;
+}
+
+/* Ripple effect on download button */
+.btn-download::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.5);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+}
+
+.btn-download:active::before {
+  width: 300px;
+  height: 300px;
+}
+
+/* Responsive design for download modal */
+@media (max-width: 600px) {
+  .modal-container-download {
+    width: 85%;
+    max-width: none;
+  }
+
+  .modal-icon-wrapper-download {
+    width: 60px;
+    height: 60px;
+  }
+
+  .modal-icon-download {
+    width: 35px;
+    height: 35px;
+  }
+
+  .modal-title-download {
+    font-size: 20px;
+  }
+
+  .modal-message-download {
+    font-size: 14px;
+  }
+
+  .quantity-selector,
+  .download-options {
+    padding: 15px;
+  }
+
+  .qty-btn,
+  .qty-input {
+    font-size: 14px;
+  }
+
+  .btn-cancel-download,
+  .btn-download {
+    padding: 9px 20px;
+    font-size: 13px;
+  }
+
+  .modal-footer-download {
+    flex-direction: column-reverse;
+    gap: 10px;
+  }
+
+  .btn-cancel-download,
+  .btn-download {
+    width: 100%;
+  }
+}
+
+@media (max-width: 400px) {
+  .modal-content-download {
+    padding: 20px 15px;
+  }
+
+  .modal-header-download {
+    padding: 20px 15px 15px;
+  }
+
+  .modal-footer-download {
+    padding: 15px;
+  }
+
+  .modal-title-download {
+    font-size: 18px;
+  }
+
+  .modal-message-download {
+    font-size: 13px;
+    margin-bottom: 20px;
+  }
+
+  .quantity-selector {
+    margin-bottom: 15px;
+  }
+
+  .qty-btn {
+    width: 35px;
+    height: 35px;
+  }
+
+  .option-checkbox {
+    margin-bottom: 10px;
+  }
+}

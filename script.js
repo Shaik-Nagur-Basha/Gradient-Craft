@@ -412,13 +412,7 @@ function downloadGradientsHistory() {
       "Generate Gradients then do download"
     );
   }
-  downloadGradientsAsZip(
-    "gradientsHistory",
-    gradientsHistory.map((color) => {
-      return color.gradient;
-    })
-  );
-  liveToastMessage("Gradient History Downloaded!", "File gradientsHistory.zip");
+  showDownloadConfirmModal("history", gradientsHistory);
 }
 
 function downloadfavouriteGradients() {
@@ -430,16 +424,7 @@ function downloadfavouriteGradients() {
       "Save Gradients to Favourite then do download"
     );
   }
-  downloadGradientsAsZip(
-    "favouriteGradients",
-    favouriteGradients.map((color) => {
-      return color.gradient;
-    })
-  );
-  liveToastMessage(
-    "Gradient Favourited Downloaded!",
-    "File is favouriteGradients.zip"
-  );
+  showDownloadConfirmModal("favourite", favouriteGradients);
 }
 
 function downloadGradients() {
@@ -454,18 +439,7 @@ function downloadGradients() {
       "Save Gradients to Favourite & Generate Gradients then do download"
     );
   }
-  downloadAllGradientsAsZip(
-    favouriteGradients.map((color) => {
-      return color.gradient;
-    }),
-    gradientsHistory.map((color) => {
-      return color.gradient;
-    })
-  );
-  liveToastMessage(
-    "History & Favourited Downloaded!",
-    "File gradientsCraft.zip"
-  );
+  showDownloadConfirmModal("all", { favouriteGradients, gradientsHistory });
 }
 
 // function clearGradients() {
@@ -1104,6 +1078,195 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 });
 
+// ============================================
+// Download Confirmation Modal Functions
+// ============================================
+
+let pendingDownloadAction = null;
+let pendingDownloadData = null;
+
+function showDownloadConfirmModal(action, data) {
+  pendingDownloadAction = action;
+  pendingDownloadData = data;
+
+  const modal = document.getElementById("downloadConfirmModal");
+  const downloadTypeSpan = document.getElementById("downloadType");
+  const totalAvailableSpan = document.getElementById("totalAvailable");
+  const qtyInput = document.getElementById("downloadQuantity");
+
+  let availableCount = 0;
+
+  // Set the message and available count based on action
+  if (action === "all") {
+    const favouriteGradients = JSON.parse(localStorage.getItem("favouriteGradients")) || [];
+    const gradientsHistory = JSON.parse(localStorage.getItem("gradientsHistory")) || [];
+    availableCount = favouriteGradients.length + gradientsHistory.length;
+    downloadTypeSpan.textContent = "gradients (History & Favorites)";
+  } else if (action === "history") {
+    const gradientsHistory = JSON.parse(localStorage.getItem("gradientsHistory")) || [];
+    availableCount = gradientsHistory.length;
+    downloadTypeSpan.textContent = "History gradients";
+  } else if (action === "favourite") {
+    const favouriteGradients = JSON.parse(localStorage.getItem("favouriteGradients")) || [];
+    availableCount = favouriteGradients.length;
+    downloadTypeSpan.textContent = "Favorite gradients";
+  }
+
+  totalAvailableSpan.textContent = availableCount;
+  qtyInput.max = availableCount;
+  qtyInput.value = Math.min(availableCount, 1);
+
+  if (availableCount === 0) {
+    qtyInput.disabled = true;
+    document.getElementById("confirmDownloadBtn").disabled = true;
+  } else {
+    qtyInput.disabled = false;
+    document.getElementById("confirmDownloadBtn").disabled = false;
+  }
+
+  // Show modal with animation
+  modal.classList.add("show");
+}
+
+function closeDownloadConfirmModal() {
+  const modal = document.getElementById("downloadConfirmModal");
+  modal.classList.remove("show");
+  pendingDownloadAction = null;
+  pendingDownloadData = null;
+}
+
+function increaseDownloadQty() {
+  const qtyInput = document.getElementById("downloadQuantity");
+  const currentVal = parseInt(qtyInput.value) || 1;
+  const maxVal = parseInt(qtyInput.max) || 1;
+  if (currentVal < maxVal) {
+    qtyInput.value = currentVal + 1;
+  }
+}
+
+function decreaseDownloadQty() {
+  const qtyInput = document.getElementById("downloadQuantity");
+  const currentVal = parseInt(qtyInput.value) || 1;
+  if (currentVal > 1) {
+    qtyInput.value = currentVal - 1;
+  }
+}
+
+function validateDownloadQty() {
+  const qtyInput = document.getElementById("downloadQuantity");
+  let value = parseInt(qtyInput.value) || 1;
+  const maxVal = parseInt(qtyInput.max) || 1;
+
+  if (value < 1) value = 1;
+  if (value > maxVal) value = maxVal;
+
+  qtyInput.value = value;
+}
+
+function confirmDownload() {
+  if (!pendingDownloadAction) return;
+
+  const quantity = parseInt(document.getElementById("downloadQuantity").value) || 1;
+  const includeJSON = document.getElementById("includeJSON").checked;
+  const includePNG = document.getElementById("includePNG").checked;
+
+  if (pendingDownloadAction === "all") {
+    downloadGradientsWithOptions(quantity, includeJSON, includePNG, "all");
+  } else if (pendingDownloadAction === "history") {
+    downloadGradientsWithOptions(quantity, includeJSON, includePNG, "history");
+  } else if (pendingDownloadAction === "favourite") {
+    downloadGradientsWithOptions(quantity, includeJSON, includePNG, "favourite");
+  }
+
+  closeDownloadConfirmModal();
+}
+
+function downloadGradientsWithOptions(quantity, includeJSON, includePNG, type) {
+  let gradients = [];
+
+  if (type === "all") {
+    const favouriteGradients = JSON.parse(localStorage.getItem("favouriteGradients")) || [];
+    const gradientsHistory = JSON.parse(localStorage.getItem("gradientsHistory")) || [];
+    gradients = [...gradientsHistory, ...favouriteGradients].slice(0, quantity).map(g => g.gradient);
+  } else if (type === "history") {
+    const gradientsHistory = JSON.parse(localStorage.getItem("gradientsHistory")) || [];
+    gradients = gradientsHistory.slice(0, quantity).map(g => g.gradient);
+  } else if (type === "favourite") {
+    const favouriteGradients = JSON.parse(localStorage.getItem("favouriteGradients")) || [];
+    gradients = favouriteGradients.slice(0, quantity).map(g => g.gradient);
+  }
+
+  if (gradients.length === 0) {
+    return liveToastMessage(
+      "<span style='color:red;'>No gradients to download</span>",
+      "Please ensure gradients exist in the selected category"
+    );
+  }
+
+  downloadGradientsAsZipWithOptions(
+    type === "all" ? "gradientsCraft" : type === "history" ? "gradientsHistory" : "favouriteGradients",
+    gradients,
+    includeJSON,
+    includePNG
+  );
+
+  let message = `${quantity} gradient${quantity !== 1 ? 's' : ''} downloaded successfully!`;
+  liveToastMessage(message, `File size optimized with selected options`);
+}
+
+function downloadGradientsAsZipWithOptions(
+  message,
+  gradients,
+  includeJSON = true,
+  includePNG = true,
+  width = resolutionForDownload.width || 1080,
+  height = resolutionForDownload.height || 2340
+) {
+  const zip = new JSZip();
+
+  // Add JSON file if selected
+  if (includeJSON) {
+    const blob = new Blob(
+      [
+        JSON.stringify(
+          gradients.map((gradient) => {
+            return { gradient: gradient };
+          }),
+          null,
+          2
+        ),
+      ],
+      {
+        type: "application/json",
+      }
+    );
+    zip.file(`${message}.json`, blob, { base64: true });
+  }
+
+  // Add PNG files if selected
+  if (includePNG) {
+    const folder = zip.folder(`${message}`);
+    gradients.forEach((gradient, index) => {
+      const imageDataUrl = generateGradientImage(gradient, width, height);
+      const imgData = imageDataUrl.split(",")[1];
+      folder.file(`${gradient.slice(28, -2)}.png`, imgData, {
+        base64: true,
+      });
+    });
+  }
+
+  zip.generateAsync({ type: "blob" }).then((content) => {
+    const link = document.createElement("a");
+    const url = URL.createObjectURL(content);
+    link.href = url;
+    link.download = `${message}.zip`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  });
+}
+
 // Consolidate initialization
 if (document.readyState === "loading") {
   document.addEventListener("DOMContentLoaded", function () {
@@ -1129,3 +1292,25 @@ function swapResolution() {
     updatePixelResolution();
   }
 }
+// Download confirmation modal event listeners
+document.addEventListener("DOMContentLoaded", function () {
+  const confirmDownloadBtn = document.getElementById("confirmDownloadBtn");
+  const downloadModal = document.getElementById("downloadConfirmModal");
+  const backdropDownload = document.querySelector(".modal-backdrop-download");
+
+  if (confirmDownloadBtn) {
+    confirmDownloadBtn.addEventListener("click", confirmDownload);
+  }
+
+  // Close modal when clicking backdrop
+  if (backdropDownload) {
+    backdropDownload.addEventListener("click", closeDownloadConfirmModal);
+  }
+
+  // Close modal with Escape key
+  document.addEventListener("keydown", function (event) {
+    if (event.key === "Escape" && downloadModal && downloadModal.classList.contains("show")) {
+      closeDownloadConfirmModal();
+    }
+  });
+});
