@@ -384,8 +384,6 @@ h1 {
   justify-content: center;
   align-items: center;
   gap: 6px;
-  /* background-color: rgba(255, 255, 255, 0.1); */
-  /* border: 1px solid #ccc; */
   border-radius: 50px;
   padding: 6px 10px;
   z-index: 5;
@@ -453,18 +451,10 @@ h1 {
 /* Responsive Pixel Resolution Container */
 @media (max-width: 576px) {
   .pixelResolutionContainer {
-    /* top: 14px; */
-    /* left: 14px; */
     padding: 8px 10px;
     gap: 4px;
     border-radius: 30px;
-    /* flex-direction: column; */
     width: auto;
-    /* background-color: rgba(255, 255, 255, 0.1);
-    border: 1px solid #ccc;
-    background-color: rgba(0, 0, 0, 0.1);
-    border-color: #999;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15); */
   }
 
   .resolution-right-icon {
@@ -493,7 +483,6 @@ h1 {
     display: none;
     flex-direction: row;
     gap: 4px;
-    /* margin-top: 6px; */
   }
 
   .pixelResolutionContainer.expanded .resolution-inputs-wrapper {
