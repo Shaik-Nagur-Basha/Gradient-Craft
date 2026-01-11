@@ -1098,16 +1098,20 @@ function showDownloadConfirmModal(action, data) {
 
   // Set the message and available count based on action
   if (action === "all") {
-    const favouriteGradients = JSON.parse(localStorage.getItem("favouriteGradients")) || [];
-    const gradientsHistory = JSON.parse(localStorage.getItem("gradientsHistory")) || [];
+    const favouriteGradients =
+      JSON.parse(localStorage.getItem("favouriteGradients")) || [];
+    const gradientsHistory =
+      JSON.parse(localStorage.getItem("gradientsHistory")) || [];
     availableCount = favouriteGradients.length + gradientsHistory.length;
     downloadTypeSpan.textContent = "gradients (History & Favorites)";
   } else if (action === "history") {
-    const gradientsHistory = JSON.parse(localStorage.getItem("gradientsHistory")) || [];
+    const gradientsHistory =
+      JSON.parse(localStorage.getItem("gradientsHistory")) || [];
     availableCount = gradientsHistory.length;
     downloadTypeSpan.textContent = "History gradients";
   } else if (action === "favourite") {
-    const favouriteGradients = JSON.parse(localStorage.getItem("favouriteGradients")) || [];
+    const favouriteGradients =
+      JSON.parse(localStorage.getItem("favouriteGradients")) || [];
     availableCount = favouriteGradients.length;
     downloadTypeSpan.textContent = "Favorite gradients";
   }
@@ -1166,37 +1170,92 @@ function validateDownloadQty() {
 function confirmDownload() {
   if (!pendingDownloadAction) return;
 
-  const quantity = parseInt(document.getElementById("downloadQuantity").value) || 1;
+  const quantity =
+    parseInt(document.getElementById("downloadQuantity").value) || 1;
   const includeJSON = document.getElementById("includeJSON").checked;
   const includePNG = document.getElementById("includePNG").checked;
 
-  if (pendingDownloadAction === "all") {
-    downloadGradientsWithOptions(quantity, includeJSON, includePNG, "all");
-  } else if (pendingDownloadAction === "history") {
-    downloadGradientsWithOptions(quantity, includeJSON, includePNG, "history");
-  } else if (pendingDownloadAction === "favourite") {
-    downloadGradientsWithOptions(quantity, includeJSON, includePNG, "favourite");
-  }
+  // Show loading overlay
+  showDownloadLoadingOverlay();
 
-  closeDownloadConfirmModal();
+  // Simulate delay for better UX and show progress
+  setTimeout(() => {
+    if (pendingDownloadAction === "all") {
+      downloadGradientsWithOptions(quantity, includeJSON, includePNG, "all");
+    } else if (pendingDownloadAction === "history") {
+      downloadGradientsWithOptions(
+        quantity,
+        includeJSON,
+        includePNG,
+        "history"
+      );
+    } else if (pendingDownloadAction === "favourite") {
+      downloadGradientsWithOptions(
+        quantity,
+        includeJSON,
+        includePNG,
+        "favourite"
+      );
+    }
+  }, 500);
+}
+
+function showDownloadLoadingOverlay() {
+  const overlay = document.getElementById("downloadLoadingOverlay");
+  overlay.classList.add("show");
+  updateDownloadProgress(0);
+}
+
+function hideDownloadLoadingOverlay() {
+  const overlay = document.getElementById("downloadLoadingOverlay");
+  overlay.classList.remove("show");
+}
+
+function updateDownloadProgress(percentage) {
+  const progressBar = document.getElementById("progressBarFill");
+  const progressText = document.getElementById("progressPercentage");
+  const loadingMessage = document.getElementById("loadingMessage");
+
+  progressBar.style.width = percentage + "%";
+  progressText.textContent = Math.round(percentage);
+
+  // Update message based on progress
+  if (percentage < 25) {
+    loadingMessage.textContent = "Preparing files...";
+  } else if (percentage < 50) {
+    loadingMessage.textContent = "Generating images...";
+  } else if (percentage < 75) {
+    loadingMessage.textContent = "Creating ZIP archive...";
+  } else if (percentage < 100) {
+    loadingMessage.textContent = "Finalizing download...";
+  } else {
+    loadingMessage.textContent = "Download complete!";
+  }
 }
 
 function downloadGradientsWithOptions(quantity, includeJSON, includePNG, type) {
   let gradients = [];
 
   if (type === "all") {
-    const favouriteGradients = JSON.parse(localStorage.getItem("favouriteGradients")) || [];
-    const gradientsHistory = JSON.parse(localStorage.getItem("gradientsHistory")) || [];
-    gradients = [...gradientsHistory, ...favouriteGradients].slice(0, quantity).map(g => g.gradient);
+    const favouriteGradients =
+      JSON.parse(localStorage.getItem("favouriteGradients")) || [];
+    const gradientsHistory =
+      JSON.parse(localStorage.getItem("gradientsHistory")) || [];
+    gradients = [...gradientsHistory, ...favouriteGradients]
+      .slice(0, quantity)
+      .map((g) => g.gradient);
   } else if (type === "history") {
-    const gradientsHistory = JSON.parse(localStorage.getItem("gradientsHistory")) || [];
-    gradients = gradientsHistory.slice(0, quantity).map(g => g.gradient);
+    const gradientsHistory =
+      JSON.parse(localStorage.getItem("gradientsHistory")) || [];
+    gradients = gradientsHistory.slice(0, quantity).map((g) => g.gradient);
   } else if (type === "favourite") {
-    const favouriteGradients = JSON.parse(localStorage.getItem("favouriteGradients")) || [];
-    gradients = favouriteGradients.slice(0, quantity).map(g => g.gradient);
+    const favouriteGradients =
+      JSON.parse(localStorage.getItem("favouriteGradients")) || [];
+    gradients = favouriteGradients.slice(0, quantity).map((g) => g.gradient);
   }
 
   if (gradients.length === 0) {
+    hideDownloadLoadingOverlay();
     return liveToastMessage(
       "<span style='color:red;'>No gradients to download</span>",
       "Please ensure gradients exist in the selected category"
@@ -1204,13 +1263,19 @@ function downloadGradientsWithOptions(quantity, includeJSON, includePNG, type) {
   }
 
   downloadGradientsAsZipWithOptions(
-    type === "all" ? "gradientsCraft" : type === "history" ? "gradientsHistory" : "favouriteGradients",
+    type === "all"
+      ? "gradientsCraft"
+      : type === "history"
+      ? "gradientsHistory"
+      : "favouriteGradients",
     gradients,
     includeJSON,
     includePNG
   );
 
-  let message = `${quantity} gradient${quantity !== 1 ? 's' : ''} downloaded successfully!`;
+  let message = `${quantity} gradient${
+    quantity !== 1 ? "s" : ""
+  } downloaded successfully!`;
   liveToastMessage(message, `File size optimized with selected options`);
 }
 
@@ -1223,6 +1288,9 @@ function downloadGradientsAsZipWithOptions(
   height = resolutionForDownload.height || 2340
 ) {
   const zip = new JSZip();
+  const totalSteps =
+    (includeJSON ? 1 : 0) + (includePNG ? gradients.length : 0);
+  let currentStep = 0;
 
   // Add JSON file if selected
   if (includeJSON) {
@@ -1241,6 +1309,8 @@ function downloadGradientsAsZipWithOptions(
       }
     );
     zip.file(`${message}.json`, blob, { base64: true });
+    currentStep++;
+    updateDownloadProgress((currentStep / totalSteps) * 60);
   }
 
   // Add PNG files if selected
@@ -1252,10 +1322,15 @@ function downloadGradientsAsZipWithOptions(
       folder.file(`${gradient.slice(28, -2)}.png`, imgData, {
         base64: true,
       });
+      currentStep++;
+      updateDownloadProgress(10 + (currentStep / totalSteps) * 65);
     });
   }
 
+  updateDownloadProgress(85);
+
   zip.generateAsync({ type: "blob" }).then((content) => {
+    updateDownloadProgress(95);
     const link = document.createElement("a");
     const url = URL.createObjectURL(content);
     link.href = url;
@@ -1264,6 +1339,21 @@ function downloadGradientsAsZipWithOptions(
     link.click();
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
+
+    // Complete the progress
+    updateDownloadProgress(100);
+
+    // Close modal after delay
+    setTimeout(() => {
+      hideDownloadLoadingOverlay();
+      closeDownloadConfirmModal();
+      liveToastMessage(
+        `${gradients.length} gradient${
+          gradients.length !== 1 ? "s" : ""
+        } downloaded successfully!`,
+        "File size optimized with selected options"
+      );
+    }, 800);
   });
 }
 
@@ -1309,7 +1399,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Close modal with Escape key
   document.addEventListener("keydown", function (event) {
-    if (event.key === "Escape" && downloadModal && downloadModal.classList.contains("show")) {
+    if (
+      event.key === "Escape" &&
+      downloadModal &&
+      downloadModal.classList.contains("show")
+    ) {
       closeDownloadConfirmModal();
     }
   });

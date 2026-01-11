@@ -517,9 +517,27 @@
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
             >
-              <path
-                d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm3.5-9H13V5.5h-2V11H8.5l3.5 3.5 3.5-3.5z"
+              <circle
+                cx="12"
+                cy="12"
+                r="10"
                 fill="currentColor"
+                opacity="0.2"
+              />
+              <circle
+                cx="12"
+                cy="12"
+                r="9.5"
+                stroke="currentColor"
+                stroke-width="1"
+              />
+              <path
+                d="M12 8V13M15 11L12 14L9 11"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                fill="none"
               />
             </svg>
           </div>
@@ -569,6 +587,28 @@
             </label>
           </div>
         </div>
+
+        <!-- Loading Overlay -->
+        <div class="download-loading-overlay" id="downloadLoadingOverlay">
+          <div class="loading-container">
+            <div class="spinner-circle">
+              <div class="spinner"></div>
+            </div>
+            <h3 class="loading-title">Processing Download</h3>
+            <div class="progress-container">
+              <div class="progress-bar-wrapper">
+                <div class="progress-bar-fill" id="progressBarFill"></div>
+              </div>
+              <p class="progress-text">
+                <span id="progressPercentage">0</span>%
+              </p>
+            </div>
+            <p class="loading-message" id="loadingMessage">
+              Preparing files...
+            </p>
+          </div>
+        </div>
+
         <div class="modal-footer-download">
           <button
             class="btn-cancel-download"
