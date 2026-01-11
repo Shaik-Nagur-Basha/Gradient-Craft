@@ -12,6 +12,7 @@ function toolTipTrigger() {
   });
 }
 toolTipTrigger();
+const resolutionForDownload = {};
 updatePixelResolution();
 
 function toggleResolutionInputs() {
@@ -66,21 +67,24 @@ function updatePixelResolution() {
   const width = document.getElementById("pixelWidth").value;
   const height = document.getElementById("pixelHeight").value;
 
-  if (width && height && width > 0 && height > 0) {
+  if (width && height && width >= 96 && height >= 96) {
     const resolution = {
       width: parseInt(width),
       height: parseInt(height),
     };
 
     // console.log("Pixel Resolution Updated:", resolution);
-    // console.log(`Resolution: ${resolution.width} × ${resolution.height}`);
-    //  // console.log(
-    //     `Aspect Ratio: ${(resolution.width / resolution.height).toFixed(4)}`
-    //   );
-    //  // console.log(
-    //     `Total Pixels: ${(resolution.width * resolution.height).toLocaleString()}`
-    //   );
+    console.log(`Resolution: ${resolution.width} × ${resolution.height}`);
+    console.log(
+      `Aspect Ratio: ${(resolution.width / resolution.height).toFixed(4)}`
+    );
+    console.log(
+      `Total Pixels: ${(resolution.width * resolution.height).toLocaleString()}`
+    );
     // console.log(`DPI Comparison: ${resolution.width}p width`);
+
+    resolutionForDownload.width = resolution.width;
+    resolutionForDownload.height = resolution.height;
   }
 }
 
@@ -693,8 +697,8 @@ function generateGradientImage(gradient, width, height) {
 function downloadGradientsAsZip(
   message,
   gradients,
-  width = 1920,
-  height = 1080
+  width = resolutionForDownload.width || 1080,
+  height = resolutionForDownload.height || 2340
 ) {
   const zip = new JSZip();
   const folder = zip.folder(`${message}`); // Create a folder named 'gradients'
@@ -733,8 +737,8 @@ function downloadGradientsAsZip(
 function downloadAllGradientsAsZip(
   favouriteGradients,
   gradientsHistory,
-  width = 1920,
-  height = 1080
+  width = resolutionForDownload.width || 1080,
+  height = resolutionForDownload.height || 2340
 ) {
   const zip = new JSZip();
   const folder1 = zip.folder("favouriteGradients");
