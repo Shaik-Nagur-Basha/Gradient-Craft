@@ -468,32 +468,105 @@ function downloadGradients() {
   );
 }
 
+// function clearGradients() {
+//   localStorage.removeItem("gradientsHistory");
+//   localStorage.removeItem("favouriteGradients");
+//   loadGradients();
+//   liveToastMessage(
+//     "Successfully DELETED History & Favourite!",
+//     "All gradients have been cleared from local storage."
+//   );
+// }
+
+// function deleteGradientsHistory() {
+//   localStorage.removeItem("gradientsHistory");
+//   loadGradients();
+//   liveToastMessage(
+//     "Successfully DELETED History!",
+//     "Gradients History have been cleared from local storage."
+//   );
+// }
+
+// function deletefavouriteGradients() {
+//   localStorage.removeItem("favouriteGradients");
+//   loadGradients();
+//   liveToastMessage(
+//     "Successfully DELETED Favourite!",
+//     "Favourite Gradients have been cleared from local storage."
+//   );
+// }
+
+// Store pending delete action
+let pendingDeleteAction = null;
+
+function showDeleteConfirmModal(action) {
+  pendingDeleteAction = action;
+  const modal = document.getElementById("deleteConfirmModal");
+  const deleteTypeSpan = document.getElementById("modalDeleteType");
+  const confirmBtn = document.getElementById("confirmDeleteBtn");
+
+  // Set the message based on action
+  if (action === "all") {
+    deleteTypeSpan.textContent = "History & Favourite gradients";
+    confirmBtn.textContent = "Delete All";
+  } else if (action === "history") {
+    deleteTypeSpan.textContent = "History gradients";
+    confirmBtn.textContent = "Delete History";
+  } else if (action === "favourite") {
+    deleteTypeSpan.textContent = "Favourite gradients";
+    confirmBtn.textContent = "Delete Favourite";
+  }
+
+  // Show modal with animation
+  modal.classList.add("show");
+}
+
+function closeDeleteConfirmModal() {
+  const modal = document.getElementById("deleteConfirmModal");
+  modal.classList.remove("show");
+  pendingDeleteAction = null;
+}
+
+function confirmDelete() {
+  if (!pendingDeleteAction) return;
+
+  if (pendingDeleteAction === "all") {
+    localStorage.removeItem("gradientsHistory");
+    localStorage.removeItem("favouriteGradients");
+    loadGradients();
+    liveToastMessage(
+      "Successfully DELETED History & Favourite!",
+      "All gradients have been cleared from local storage."
+    );
+  } else if (pendingDeleteAction === "history") {
+    localStorage.removeItem("gradientsHistory");
+    loadGradients();
+    liveToastMessage(
+      "Successfully DELETED History!",
+      "Gradients History have been cleared from local storage."
+    );
+  } else if (pendingDeleteAction === "favourite") {
+    localStorage.removeItem("favouriteGradients");
+    loadGradients();
+    liveToastMessage(
+      "Successfully DELETED Favourite!",
+      "Favourite Gradients have been cleared from local storage."
+    );
+  }
+
+  closeDeleteConfirmModal();
+}
+
 function clearGradients() {
-  localStorage.removeItem("gradientsHistory");
-  localStorage.removeItem("favouriteGradients");
-  loadGradients();
-  liveToastMessage(
-    "Successfully DELETED History & Favourite!",
-    "All gradients have been cleared from local storage."
-  );
+  showDeleteConfirmModal("all");
 }
 
 function deleteGradientsHistory() {
-  localStorage.removeItem("gradientsHistory");
-  loadGradients();
-  liveToastMessage(
-    "Successfully DELETED History!",
-    "Gradients History have been cleared from local storage."
-  );
+  showDeleteConfirmModal("history");
 }
 
 function deletefavouriteGradients() {
-  localStorage.removeItem("favouriteGradients");
-  loadGradients();
-  liveToastMessage(
-    "Successfully DELETED Favourite!",
-    "Favourite Gradients have been cleared from local storage."
-  );
+  showDeleteConfirmModal("favourite");
 }
 
 function deleteGradient(gradLoaction, index, gradientCode) {
@@ -1004,6 +1077,29 @@ document.addEventListener("DOMContentLoaded", function () {
       ) {
         selector.classList.add("hidden");
       }
+    }
+  });
+});
+
+// Delete confirmation modal event listeners
+document.addEventListener("DOMContentLoaded", function () {
+  const confirmDeleteBtn = document.getElementById("confirmDeleteBtn");
+  const modal = document.getElementById("deleteConfirmModal");
+  const backdrop = document.querySelector(".modal-backdrop");
+
+  if (confirmDeleteBtn) {
+    confirmDeleteBtn.addEventListener("click", confirmDelete);
+  }
+
+  // Close modal when clicking backdrop
+  if (backdrop) {
+    backdrop.addEventListener("click", closeDeleteConfirmModal);
+  }
+
+  // Close modal with Escape key
+  document.addEventListener("keydown", function (event) {
+    if (event.key === "Escape" && modal && modal.classList.contains("show")) {
+      closeDeleteConfirmModal();
     }
   });
 });
